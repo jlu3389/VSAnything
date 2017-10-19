@@ -53,27 +53,27 @@ namespace Company.VSAnything
 				return;
 			}
 			ToolWindowPane window = this.m_Package.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
-            //mariotodo
-            //if (window != null && window.get_Frame() != null)
-            //{
-            //    ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.get_Frame()).Show());
-            //    FastFindControl fastfind_control2 = this.GetFastFindControl();
-            //    if (fastfind_control2 != null)
-            //    {
-            //        fastfind_control2.OnActivated();
-            //    }
-            //}
+            //mariotodo get_Frame -> Frame
+            if (window != null && window.Frame != null)
+            {
+                ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.Frame).Show());
+                FastFindControl fastfind_control2 = this.GetFastFindControl();
+                if (fastfind_control2 != null)
+                {
+                    fastfind_control2.OnActivated();
+                }
+            }
 			this.m_InShow = false;
 		}
 
 		private FastFindControl GetFastFindControl()
 		{
-            //mariotodo
-            //ToolWindowPane window = this.m_Package.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
-            //if (window != null && window.get_Frame() != null)
-            //{
-            //    return ((FastFindControlWPFWrapper)window.get_Content()).FastFindControl;
-            //}
+            //mariotodo  getContent -> Content
+            ToolWindowPane window = this.m_Package.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
+            if (window != null && window.Frame != null)
+            {
+                return ((FastFindControlWPFWrapper)window.Content).FastFindControl;
+            }
 			return null;
 		}
 

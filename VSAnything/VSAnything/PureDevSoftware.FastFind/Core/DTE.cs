@@ -165,22 +165,21 @@ namespace Company.VSAnything
 		private static void GetProjects(Project project, List<string> projects)
 		{
 			string project_kind = project.Kind;
-            //mariotodo
-            //if (project_kind == "{66A26720-8FB5-11D2-AA7E-00C04F688DDE}")
-            //{
-            //    using (IEnumerator enumerator = project.ProjectItems.GetEnumerator())
-            //    {
-            //        while (enumerator.MoveNext())
-            //        {
-            //            Project sub_project = ((ProjectItem)enumerator.Current).SubProject;
-            //            if (sub_project != null)
-            //            {
-            //                DTE.GetProjects(sub_project, projects);
-            //            }
-            //        }
-            //        return;
-            //    }
-            //}
+            if (project_kind == "{66A26720-8FB5-11D2-AA7E-00C04F688DDE}")
+            {
+                IEnumerator enumerator = project.ProjectItems.GetEnumerator();
+                {
+                    while (enumerator.MoveNext())
+                    {
+                        Project sub_project = ((ProjectItem)enumerator.Current).SubProject;
+                        if (sub_project != null)
+                        {
+                            DTE.GetProjects(sub_project, projects);
+                        }
+                    }
+                    return;
+                }
+            }
 			if (project_kind != "{66A2671D-8FB5-11D2-AA7E-00C04F688DDE}")
 			{
 				string project_full_name = null;

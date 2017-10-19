@@ -24,6 +24,7 @@ namespace Company.VSAnything
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]  
     [Guid(GuidList.guidVSAnythingPkgString)]
+    [ProvideMenuResource("Menus.ctmenu", 1)]
     public partial class VSAnythingPackage : Package, IVsSolutionEvents, IVsSolutionLoadEvents, IVsHierarchyEvents, IDisposable
 	{
 		private class ActivateDocEvent
@@ -460,25 +461,11 @@ namespace Company.VSAnything
 			return true;
 		}
 
-		public static void OpenPurchaseWebPage()
-		{
-			System.Diagnostics.Process.Start("http://www.puredevsoftware.com/fastfind/Purchase.htm");
-		}
 
 		private object WaitForRegistrationCheckToComplete(object args, ThreadJobContext context)
 		{
 			this.m_FinsihedRegistrationCheck.WaitOne();
 			return null;
-		}
-
-		public void ShowRegistrationForm()
-		{
-			BusyForm.Show("Checking registration...", "FastFind", new ThreadJobMain(this.WaitForRegistrationCheckToComplete));
-			if (RegistrationForm.ShowForm(this.m_Settings, true))
-			{
-				this.m_Expired = false;
-				this.m_Registered = true;
-			}
 		}
 
 		private void ShowError(string message)

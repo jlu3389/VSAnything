@@ -366,7 +366,7 @@ namespace Company.VSAnything
 			this.m_SelectColourButton.UseVisualStyleBackColor = true;
 			this.m_SelectColourButton.Click += new EventHandler(this.ColourButtonClicked);
 			base.AutoScaleDimensions = new SizeF(6f, 13f);
-			base.AutoScaleMode = AutoScaleMode.Font;
+			//base.AutoScaleMode = AutoScaleMode.Font;
 			base.Controls.Add(this.label2);
 			base.Controls.Add(this.m_ControlColourButton);
 			base.Controls.Add(this.m_FontButton);

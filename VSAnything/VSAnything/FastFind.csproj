@@ -129,10 +129,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Guids.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\AboutToExpireForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="PureDevSoftware.FastFind\VSPackage\Guids.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\AppearanceControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -147,12 +144,12 @@
     <Compile Include="PureDevSoftware.FastFind\Core\DTE.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\EscapeKeyPressedHandler.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\FastFindCmd.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\FastFindControl.cs">
+    <Compile Include="PureDevSoftware.FastFind\UI\FastFindControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PureDevSoftware.FastFind\Core\FastFindControlSettings.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\FastFindControlWPFWrapper.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\FastFindForm.cs">
+    <Compile Include="PureDevSoftware.FastFind\UI\FastFindForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PureDevSoftware.FastFind\Core\FastFindPackage.cs" />
@@ -188,18 +185,18 @@
     </Compile>
     <Compile Include="PureDevSoftware.FastFind\Core\PathMode.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\Pattern.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\PkgCmdIDList.cs" />
+    <Compile Include="PureDevSoftware.FastFind\VSPackage\PkgCmdIDList.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\ProfileTimer.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\RegistrationForm.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\Resource1.cs" />
+    <Compile Include="PureDevSoftware.FastFind\UI\Resource1.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\ScanFinishedHandler.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\Set.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\Settings.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\SettingsCmd.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\SettingsDialog.cs">
+    <Compile Include="PureDevSoftware.FastFind\UI\SettingsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PureDevSoftware.FastFind\Core\SettingsDialogPage.cs">
+    <Compile Include="PureDevSoftware.FastFind\UI\SettingsDialogPage.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PureDevSoftware.FastFind\Core\Solution.cs" />
@@ -224,15 +221,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\VSAnythingPackage.cs" />
+    <Compile Include="PureDevSoftware.FastFind\VSPackage\VSAnythingPackage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="PureDevSoftware.FastFind\Core\AboutToExpireForm.resx" />
-    <EmbeddedResource Include="PureDevSoftware.FastFind\Core\FastFindControl.resx" />
-    <EmbeddedResource Include="PureDevSoftware.FastFind\Core\FastFindForm.resx" />
-    <EmbeddedResource Include="PureDevSoftware.FastFind\Core\Resource1.resx" />
-    <EmbeddedResource Include="PureDevSoftware.FastFind\Core\SettingsDialog.resx" />
+    <EmbeddedResource Include="PureDevSoftware.FastFind\UI\FastFindControl.resx" />
+    <EmbeddedResource Include="PureDevSoftware.FastFind\UI\FastFindForm.resx" />
+    <EmbeddedResource Include="PureDevSoftware.FastFind\UI\Resource1.resx" />
+    <EmbeddedResource Include="PureDevSoftware.FastFind\UI\SettingsDialog.resx" />
     <EmbeddedResource Include="PureDevSoftware.FastFind\Core\WelcomeForm.resx" />
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -253,7 +249,13 @@
     <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\%24this.Icon.ico" />
     <Content Include="Resources\Package.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <VSCTCompile Include="PureDevSoftware.FastFind\VSPackage\VSAnything.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
