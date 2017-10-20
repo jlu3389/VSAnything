@@ -46,10 +46,6 @@ namespace Company.VSAnything
 
 		private void MenuItemCallback(object sender, EventArgs e)
 		{
-			if (!VSAnythingPackage.Inst.CheckRegistration())
-			{
-				return;
-			}
 			string path = this.m_DTE.GetActiveDocumentFilename();
 			if (string.IsNullOrEmpty(path))
 			{

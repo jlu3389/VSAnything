@@ -32,16 +32,6 @@ namespace Company.VSAnything
 			this.m_FastFindControl.Dock = DockStyle.Fill;
 			this.m_FastFindControl.ControlWantsToClose += new FastFindControl.ControlWantsToCloseHandler(this.FastFindControlWantsToClose);
 			base.Controls.Add(this.m_FastFindControl);
-			if (VSAnythingPackage.Inst.RegistrationCheckComplete && !VSAnythingPackage.Inst.Registered)
-			{
-				this.Text = string.Concat(new object[]
-				{
-					this.Text,
-					" - DEMO (",
-					VSAnythingPackage.Inst.DaysLeft,
-					" days left...)"
-				});
-			}
 			this.m_FastFindControl.OnActivated();
 		}
 
@@ -87,10 +77,10 @@ namespace Company.VSAnything
 			ComponentResourceManager resources = new ComponentResourceManager(typeof(FastFindForm));
 			base.SuspendLayout();
 			base.AutoScaleDimensions = new SizeF(6f, 13f);
-			//base.AutoScaleMode = AutoScaleMode.Font;
+			base.AutoScaleMode = AutoScaleMode.Font;
 			base.ClientSize = new Size(720, 442);
-			//base.FormBorderStyle = FormBorderStyle.SizableToolWindow;
-			//base.Icon = (Icon)resources.GetObject("$this.Icon");
+			base.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+			base.Icon = (Icon)resources.GetObject("$this.Icon");
 			base.Name = "FastFindForm";
 			base.ShowInTaskbar = false;
 			base.StartPosition = FormStartPosition.CenterScreen;

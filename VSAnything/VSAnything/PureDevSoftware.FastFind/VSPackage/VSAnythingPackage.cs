@@ -95,20 +95,6 @@ namespace Company.VSAnything
 
         private Dictionary<IVsHierarchy, VSAnythingPackage.HierarchyEventInfo> m_HierarchyEventMap = new Dictionary<IVsHierarchy, VSAnythingPackage.HierarchyEventInfo>();
 
-		private volatile bool m_RegistrationCheckComplete;
-
-		private string m_RegistrationError;
-
-		private bool m_Expired;
-
-		private bool m_Registered;
-
-		private int m_DaysLeft;
-
-		private ManualResetEvent m_FinsihedRegistrationCheck = new ManualResetEvent(false);
-
-		private System.Threading.Thread m_RegistrationThread;
-
 		private SolutionFiles m_SolutionFiles;
 
 		private FileFinder m_FileFinder;
@@ -118,10 +104,6 @@ namespace Company.VSAnything
 		private GetOpenFilesThread m_GetOpenFilesThread;
 
 		private bool m_SolutionLoaded;
-
-		private volatile bool m_DatabaseVertificationFailed;
-
-		private volatile string m_FullRegistrationCheckError;
 
 		private const int m_ActivateDocHackTimeout = 200;
 
@@ -133,13 +115,7 @@ namespace Company.VSAnything
 
 		private int m_ForceActivateDocCount;
 
-		public bool Expired
-		{
-			get
-			{
-				return this.m_Expired;
-			}
-		}
+
 
         public static VSAnythingPackage Inst
 		{
@@ -149,29 +125,6 @@ namespace Company.VSAnything
 			}
 		}
 
-		public bool RegistrationCheckComplete
-		{
-			get
-			{
-				return this.m_RegistrationCheckComplete;
-			}
-		}
-
-		public bool Registered
-		{
-			get
-			{
-				return this.m_Registered;
-			}
-		}
-
-		public int DaysLeft
-		{
-			get
-			{
-				return this.m_DaysLeft;
-			}
-		}
 		protected override void Initialize()
 		{
 			base.Initialize();
@@ -182,8 +135,6 @@ namespace Company.VSAnything
 				Log.WriteLine("----------------------------------------------------------");
 				Log.WriteLine("FastFind Initialise");
 				Log.WriteLine("FastFind Version: 4.8");
-				this.m_RegistrationThread = new System.Threading.Thread(new ThreadStart(this.RegistrationThraedMain));
-				this.m_RegistrationThread.Start();
 				this.m_Settings.Read();
 				EnvDTE.DTE env_dte = (EnvDTE.DTE)base.GetService(typeof(SDTE));
 				string vs_version;
@@ -382,96 +333,6 @@ namespace Company.VSAnything
 			this.m_TextFinder.StartFileScan();
 		}
 
-		private void RegistrationThraedMain()
-		{
-            //Registration.Initialise(VSAnythingPackage.m_Manufacturer, VSAnythingPackage.m_ProductName, VSAnythingPackage.m_WebsiteAddr, "fastfind_machine_id", "fastfind_registration", "http://www.puredevsoftware.com/fastfind/Purchase.htm", VSAnythingPackage.m_RegTypes, StoreMode.LocalFile);
-            //string error = null;
-            //if (!Registration.CheckRegistration(ref error))
-            //{
-            //    this.ShowError(error);
-            //}
-            //Log.WriteLine("Demo.DaysLeft: " + Demo.DaysLeft);
-            //Log.WriteLine("Demo.Expired: " + Demo.Expired.ToString());
-            //Log.WriteLine("Registration.Registration.Registered: " + Registration.Registered.ToString());
-            //Log.WriteLine("Demo.Expired: " + Demo.Expired.ToString());
-            //Log.WriteLine("Registration.Registration.Registered: " + Registration.Registered.ToString());
-            //this.m_Expired = (Demo.Expired && !Registration.Registered);
-            //this.m_RegistrationCheckComplete = true;
-            //this.m_FinsihedRegistrationCheck.Set();
-            //this.m_RegistrationThread = null;
-            //this.m_Registered = Registration.Registered;
-            //this.m_DaysLeft = Demo.DaysLeft;
-            //Registration.VerificationCompleteCallback += new VerificationCompleteCallbackHandler(this.RegistrationVerificationComplete);
-            //Registration.StartVerification();
-		}
-
-		private void RegistrationVerificationComplete(FullVerificationResult result, string error)
-		{
-			switch (result)
-			{
-			case FullVerificationResult.DemoCheckFailed:
-			case FullVerificationResult.RegistrationCheckFailed:
-			case FullVerificationResult.Expired:
-				this.m_Expired = true;
-				this.m_Registered = false;
-				this.m_DatabaseVertificationFailed = true;
-				break;
-			}
-			this.m_FullRegistrationCheckError = error;
-		}
-
-		public bool CheckRegistration()
-		{
-            //if (this.m_DatabaseVertificationFailed)
-            //{
-            //    string message = "There is a problem with the FastFind registration.\n";
-            //    message += "Please check that the number of installs does not exceed the number of licenses purchased.\n";
-            //    if (this.m_FullRegistrationCheckError != null)
-            //    {
-            //        message = message + "Additional Information: " + this.m_FullRegistrationCheckError;
-            //    }
-            //    MessageBox.Show(message, "FastFind", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-            //    return false;
-            //}
-            //if (this.m_RegistrationError != null)
-            //{
-            //    MessageBox.Show(this.m_RegistrationError, "FastFind registration error", MessageBoxButtons.OK, MessageBoxIcon.Hand);
-            //    return false;
-            //}
-            //if (!this.m_RegistrationCheckComplete)
-            //{
-            //    return true;
-            //}
-            //if (this.m_Expired)
-            //{
-            //    this.ShowRegistrationForm();
-            //    return !this.m_Expired;
-            //}
-            //if (!Registration.Registered && this.m_DaysLeft <= 5)
-            //{
-            //    int today = DateTime.Now.Day;
-            //    if (today != this.m_Settings.LastShowExpireForm)
-            //    {
-            //        this.m_Settings.LastShowExpireForm = today;
-            //        this.m_Settings.Write();
-            //        AboutToExpireForm expr_DB = new AboutToExpireForm(this.m_DaysLeft);
-            //        expr_DB.ShowDialog();
-            //        if (expr_DB.Purchased)
-            //        {
-            //            this.ShowRegistrationForm();
-            //        }
-            //    }
-            //}
-			return true;
-		}
-
-
-		private object WaitForRegistrationCheckToComplete(object args, ThreadJobContext context)
-		{
-			this.m_FinsihedRegistrationCheck.WaitOne();
-			return null;
-		}
-
 		private void ShowError(string message)
 		{
 			string text = "There is a problem with the FastFind Registration. Please uninstall and then reinstall FastFind.";
@@ -479,8 +340,6 @@ namespace Company.VSAnything
 			{
 				text = text + "\n\nDetails:\n" + message;
 			}
-			Log.WriteLine("Exit: " + text);
-			this.m_RegistrationError = text;
 		}
 
 		private void ProjectAddedOrRemoved(Project project)
@@ -532,11 +391,6 @@ namespace Company.VSAnything
 				this.m_TextFinder.Dispose();
 				this.m_TextFinder = null;
 			}
-			if (this.m_FinsihedRegistrationCheck != null)
-			{
-				this.m_FinsihedRegistrationCheck.Dispose();
-				this.m_FinsihedRegistrationCheck = null;
-			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -545,10 +399,6 @@ namespace Company.VSAnything
 			{
 				try
 				{
-					if (this.m_RegistrationThread != null)
-					{
-						this.m_RegistrationThread.Abort();
-					}
 				}
 				catch (Exception)
 				{

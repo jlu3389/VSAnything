@@ -232,11 +232,7 @@ namespace Company.VSAnything
 
 		private Panel panel1;
 
-		private Label label2;
-
-		private Label m_TipLabel;
-
-		private Label m_TipLinkLabel;
+        private Label label2;
 
 		private CheckBox m_WholeWordCheckbox;
 
@@ -245,6 +241,8 @@ namespace Company.VSAnything
 		private Button button6;
 
 		private Button button7;
+        private Label m_TipLinkLabel;
+        private Label m_TipLabel;
 
 		private CheckBox m_RegExpCheckBox;
 
@@ -1400,10 +1398,6 @@ namespace Company.VSAnything
 
 		private void TextBoxTextChanged(object sender, EventArgs e)
 		{
-			if (VSAnythingPackage.Inst.Expired)
-			{
-				return;
-			}
 			if (this.m_IgnoreTextBoxTextChanges)
 			{
 				return;
@@ -1782,10 +1776,10 @@ namespace Company.VSAnything
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.m_TipLinkLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.m_TipLabel = new System.Windows.Forms.Label();
+            this.m_TipLinkLabel = new System.Windows.Forms.Label();
             this.m_ListBox = new Company.VSAnything.MyListBox();
             this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.m_OptionsPanel.SuspendLayout();
@@ -2153,20 +2147,6 @@ namespace Company.VSAnything
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.DisableTipsButton);
             // 
-            // m_TipLinkLabel
-            // 
-            this.m_TipLinkLabel.AutoSize = true;
-            this.m_TipLinkLabel.BackColor = System.Drawing.Color.LightGray;
-            this.m_TipLinkLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_TipLinkLabel.ForeColor = System.Drawing.Color.Blue;
-            this.m_TipLinkLabel.Location = new System.Drawing.Point(140, 2);
-            this.m_TipLinkLabel.Name = "m_TipLinkLabel";
-            this.m_TipLinkLabel.Padding = new System.Windows.Forms.Padding(2);
-            this.m_TipLinkLabel.Size = new System.Drawing.Size(278, 30);
-            this.m_TipLinkLabel.TabIndex = 15;
-            this.m_TipLinkLabel.Text = "www.puredevsoftware.com";
-            this.m_TipLinkLabel.Click += new System.EventHandler(this.TipLinkLabelClicked);
-            // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.LemonChiffon;
@@ -2194,6 +2174,20 @@ namespace Company.VSAnything
             this.m_TipLabel.Size = new System.Drawing.Size(190, 24);
             this.m_TipLabel.TabIndex = 1;
             this.m_TipLabel.Text = "Did you know...";
+            // 
+            // m_TipLinkLabel
+            // 
+            this.m_TipLinkLabel.AutoSize = true;
+            this.m_TipLinkLabel.BackColor = System.Drawing.Color.LightGray;
+            this.m_TipLinkLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_TipLinkLabel.ForeColor = System.Drawing.Color.Blue;
+            this.m_TipLinkLabel.Location = new System.Drawing.Point(140, 2);
+            this.m_TipLinkLabel.Name = "m_TipLinkLabel";
+            this.m_TipLinkLabel.Padding = new System.Windows.Forms.Padding(2);
+            this.m_TipLinkLabel.Size = new System.Drawing.Size(278, 30);
+            this.m_TipLinkLabel.TabIndex = 15;
+            this.m_TipLinkLabel.Text = "www.puredevsoftware.com";
+            this.m_TipLinkLabel.Click += new System.EventHandler(this.TipLinkLabelClicked);
             // 
             // m_ListBox
             // 

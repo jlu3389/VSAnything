@@ -38,11 +38,8 @@ namespace Company.VSAnything
 		{
 			try
 			{
-				if (VSAnythingPackage.Inst.CheckRegistration())
-				{
-					string initial_text = this.m_DTE.GetSelectedText();
-					new FastFindForm(this.m_DTE, this.m_SolutionFiles, this.m_FileFinder, this.m_TextFinder, this.m_GetOpenFilesThread, this.m_Settings, initial_text).ShowDialog();
-				}
+                string initial_text = this.m_DTE.GetSelectedText();
+                new FastFindForm(this.m_DTE, this.m_SolutionFiles, this.m_FileFinder, this.m_TextFinder, this.m_GetOpenFilesThread, this.m_Settings, initial_text).ShowDialog();
 			}
 			catch (Exception arg_4C_0)
 			{

@@ -152,7 +152,6 @@
     <Compile Include="PureDevSoftware.FastFind\UI\FastFindForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PureDevSoftware.FastFind\VSPackage\FastFindPackage.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\FastFindProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -176,7 +175,7 @@
     <Compile Include="PureDevSoftware.FastFind\Core\IMessageFilter.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\InfoListBoxItem.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\MessageFilter.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\MyListBox.cs">
+    <Compile Include="PureDevSoftware.FastFind\UI\MyListBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PureDevSoftware.FastFind\Core\NativeMethods.cs" />
