@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl x:Class="PureDevSoftware.FastFind.FastFindControlWPFWrapper" TabIndex="0" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tsp="clr-namespace:Company.VSAnything">
+  <Grid>
+    <WindowsFormsHost Name="m_WindowsFormsHost" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <tsp:TabStopPanel xmlns:ConnectionId = '2' x:Name="m_TabStopPanel" />
+    </WindowsFormsHost>
+  </Grid>
+</UserControl>

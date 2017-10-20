@@ -42,16 +42,6 @@ namespace Company.VSAnything
 				return;
 			}
 			this.m_InShow = true;
-			if (!VSAnythingPackage.Inst.CheckRegistration())
-			{
-				FastFindControl fastfind_control = this.GetFastFindControl();
-				if (fastfind_control != null)
-				{
-					fastfind_control.Enabled = false;
-				}
-				this.m_InShow = false;
-				return;
-			}
 			ToolWindowPane window = this.m_Package.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
             //mariotodo get_Frame -> Frame
             if (window != null && window.Frame != null)

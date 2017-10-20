@@ -17,12 +17,6 @@ namespace Company.VSAnything
 
 		private DTE m_DTE;
 
-		internal WindowsFormsHost m_WindowsFormsHost;
-
-		internal TabStopPanel m_TabStopPanel;
-
-		private bool _contentLoaded;
-
 		internal FastFindControl FastFindControl
 		{
 			get
@@ -33,7 +27,7 @@ namespace Company.VSAnything
 
 		internal FastFindControlWPFWrapper(DTE dte, SolutionFiles solution_files, FileFinder file_finder, TextFinder text_finder, GetOpenFilesThread get_open_files_thread, Settings settings, WindowPane window_pane_owner)
 		{
-			//this.InitializeComponent();
+			this.InitializeComponent();
 			this.m_DTE = dte;
 			this.m_TabStopPanel.WpfHost = this.m_WindowsFormsHost;
 			bool is_modal = false;
@@ -50,35 +44,6 @@ namespace Company.VSAnything
 		private void FastFindDockedWindowGotFocus(object sender, RoutedEventArgs e)
 		{
 			this.m_FastFindControl.FocusTextBox();
-		}
-
-		[GeneratedCode("PresentationBuildTasks", "4.0.0.0"), DebuggerNonUserCode]
-		public void InitializeComponent()
-		{
-			if (this._contentLoaded)
-			{
-				return;
-			}
-			//this._contentLoaded = true;
-			Uri resourceLocater = new Uri("/FastFind;component/fastfindcontrolwpfwrapper.xaml", UriKind.Relative);
-			System.Windows.Application.LoadComponent(this, resourceLocater);
-		}
-
-		[GeneratedCode("PresentationBuildTasks", "4.0.0.0"), EditorBrowsable(EditorBrowsableState.Never), DebuggerNonUserCode]
-		void IComponentConnector.Connect(int connectionId, object target)
-		{
-			if (connectionId == 1)
-			{
-				//this.m_WindowsFormsHost = (WindowsFormsHost)target;
-				//this.m_WindowsFormsHost.GotFocus += new RoutedEventHandler(this.FastFindDockedWindowGotFocus);
-				return;
-			}
-			if (connectionId != 2)
-			{
-				//this._contentLoaded = true;
-				return;
-			}
-			this.m_TabStopPanel = (TabStopPanel)target;
 		}
 	}
 }

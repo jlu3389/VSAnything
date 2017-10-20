@@ -25,6 +25,10 @@ namespace Company.VSAnything
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]  
     [Guid(GuidList.guidVSAnythingPkgString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
+    // ProvideOptionPage(typeof(SettingsDialogPage), "FastFind", "Settings", 106, 107, true), ProvideOptionPage(typeof(AppearanceDialogPage), "FastFind", "Appearance", 106, 108, true), ProvideProfile(typeof(SettingsDialogPage), "FastFind", "Settings", 106, 107, true, DescriptionResourceID = 109), 
+    //ProvideProfile(typeof(AppearanceDialogPage), "FastFind", "Appearance", 106, 108, true, DescriptionResourceID = 110), 
+    [ProvideToolWindow(typeof(FastFindToolWindowPane))]
+
     public partial class VSAnythingPackage : Package, IVsSolutionEvents, IVsSolutionLoadEvents, IVsHierarchyEvents, IDisposable
 	{
 		private class ActivateDocEvent

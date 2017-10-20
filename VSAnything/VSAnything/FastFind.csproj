@@ -148,11 +148,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="PureDevSoftware.FastFind\Core\FastFindControlSettings.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\FastFindControlWPFWrapper.cs" />
+    <Compile Include="PureDevSoftware.FastFind\UI\FastFindControlWPFWrapper.cs" />
     <Compile Include="PureDevSoftware.FastFind\UI\FastFindForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PureDevSoftware.FastFind\Core\FastFindPackage.cs" />
+    <Compile Include="PureDevSoftware.FastFind\VSPackage\FastFindPackage.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\FastFindProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -187,7 +187,6 @@
     <Compile Include="PureDevSoftware.FastFind\Core\Pattern.cs" />
     <Compile Include="PureDevSoftware.FastFind\VSPackage\PkgCmdIDList.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\ProfileTimer.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\RegistrationForm.cs" />
     <Compile Include="PureDevSoftware.FastFind\UI\Resource1.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\ScanFinishedHandler.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\Set.cs" />
@@ -203,7 +202,7 @@
     <Compile Include="PureDevSoftware.FastFind\Core\SolutionFiles.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\SourceHeaderToggleCmd.cs" />
     <Compile Include="PureDevSoftware.FastFind\Core\StringArrayConverter.cs" />
-    <Compile Include="PureDevSoftware.FastFind\Core\TabStopPanel.cs">
+    <Compile Include="PureDevSoftware.FastFind\UI\TabStopPanel.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PureDevSoftware.FastFind\Core\TextFinder.cs" />
@@ -257,7 +256,19 @@
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Page Include="PureDevSoftware.FastFind\UI\fastfindcontrolwpfwrapper.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PureDevSoftware.FastFind\Design\" />
+  </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>
