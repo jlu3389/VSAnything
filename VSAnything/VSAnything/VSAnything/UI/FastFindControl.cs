@@ -196,14 +196,13 @@ namespace Company.VSAnything
 
         private Label m_FullPathTextBox;
 
-        private Button button2;
-
         private CheckBox m_WholeWordCheckbox;
-
-        private Button button7;
         private Panel m_TextBoxBorderPanel;
         private FastFindTextBox m_TextBox;
         private Button button1;
+        private CheckBox m_CheckBoxShowCurrFile;
+        private RadioButton radioButton_Or;
+        private RadioButton radioButton_And;
         private MyListBox m_ListBox;
 
 		[method: CompilerGenerated]
@@ -328,7 +327,7 @@ namespace Company.VSAnything
 				this.m_IgnoreTextBoxTextChanges = false;
 				this.m_TextBox.SelectAll();
 			}
-			this.m_TextBox.Focus();
+            this.m_TextBox.Focus();
 			this.HookEvents();
 			this.SetSolutionFilename(this.m_SolutionFiles.SolutionFilename);
             this.UpdateExtToScan();
@@ -411,9 +410,9 @@ namespace Company.VSAnything
 
 		public void FocusTextBox()
 		{
-			this.StartGettingOpenFiles();
-			this.m_TextBox.SelectAll();
-			this.m_TextBox.Focus();
+            this.StartGettingOpenFiles();
+            this.m_TextBox.SelectAll();
+            this.m_TextBox.Focus();
 		}
 
 		private void FocusDockedToolWindow()
@@ -467,22 +466,22 @@ namespace Company.VSAnything
 
 		public void SelectText()
 		{
-			this.m_TextBox.Focus();
-			this.m_TextBox.SelectAll();
-			if (!this.m_TextBox.Focused)
-			{
-				this.m_SelectTextTimer.Start();
-			}
+            this.m_TextBox.Focus();
+            this.m_TextBox.SelectAll();
+            if (!this.m_TextBox.Focused)
+            {
+                this.m_SelectTextTimer.Start();
+            }
 		}
 
 		private void SelectTextTimerTick(object sender, EventArgs e)
 		{
-			this.m_TextBox.Focus();
-			this.m_TextBox.SelectAll();
-			if (this.m_TextBox.Focused)
-			{
-				this.m_SelectTextTimer.Stop();
-			}
+            this.m_TextBox.Focus();
+            this.m_TextBox.SelectAll();
+            if (this.m_TextBox.Focused)
+            {
+                this.m_SelectTextTimer.Stop();
+            }
 		}
 
 		private void OnDispose(object sender, EventArgs e)
@@ -518,9 +517,29 @@ namespace Company.VSAnything
 
 		private bool UpdateFilesToSearch()
 		{
+            /********** 只扫描当前文档 **************/
+            if (m_CheckBoxShowCurrFile.Checked)
+            {
+                string filePath = m_DTE.GetActiveDocumentFilename();
+                if (filePath != null)
+                {
+                    filePath = Utils.NormalisePath(filePath);
+
+                    this.m_FilesToSearch = new List<string>();
+                    this.m_FilesToSearchSet = new Set<string>();
+                    this.m_UnsavedDocumentsToSearch = new List<UnsavedDocument>();
+
+                    this.m_FilesToSearch.Add(filePath);
+                    this.m_FilesToSearchSet.Add(filePath);
+                }
+                return true;
+            }
+
+            /************* 扫描所有文档 **********************/
 			Set<string> old_files_to_search_set = new Set<string>(this.m_FilesToSearchSet);
 			this.m_FilesToSearch = new List<string>();
 			this.m_FilesToSearchSet = new Set<string>();
+            /// 所有在工程中的文档
 			using (List<string>.Enumerator enumerator = this.m_AllSolutionFiles.GetEnumerator())
 			{
 				while (enumerator.MoveNext())
@@ -534,16 +553,18 @@ namespace Company.VSAnything
 					}
 				}
 			}
-			foreach (string expr_9D in FastFindControl.m_OpenFiles)
+            /// 不在工程中但已打开的文档
+			foreach (string openFile in FastFindControl.m_OpenFiles)
 			{
-				string open_file_norm = Utils.NormalisePath(expr_9D);
-				string ext2 = Path.GetExtension(expr_9D).ToLower();
+				string open_file_norm = Utils.NormalisePath(openFile);
+				string ext2 = Path.GetExtension(openFile).ToLower();
 				if (this.m_ExtToScan.Contains(ext2) && !this.m_FilesToSearchSet.Contains(open_file_norm))
 				{
 					this.m_FilesToSearch.Add(open_file_norm);
 					this.m_FilesToSearchSet.Add(open_file_norm);
 				}
 			}
+            ///
 			Set<string> old_unsaved_documents = new Set<string>();
 			foreach (UnsavedDocument unsaved_document in this.m_UnsavedDocumentsToSearch)
 			{
@@ -868,7 +889,25 @@ namespace Company.VSAnything
 					return true;
 				}
 			}
-			return base.ProcessCmdKey(ref msg, keyData);
+
+            /// 如果是 Alt + 快捷键，在非dock 模式下，会跟VS冲突，导致控件无法收到。
+            /// 所以先判断子控件是否处理，不处理才放过
+            /// 
+            for (int i = 0; i < Keys.Z - Keys.A + 1; ++i)
+            {
+                if (keyData == (Keys.Alt | (Keys.A + i)))
+                {
+                    char ch = (char)((int)'a' + i);
+
+                    bool bRet = ProcessMnemonic(ch);
+
+                    if (bRet)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
 		}
 
 		private void Submit()
@@ -1329,6 +1368,9 @@ namespace Company.VSAnything
 		{
 			if (this.m_Settings.SetFastFindFindText(this.m_FindTextCheckBox.Checked, this.m_IsModal))
 			{
+                // 把焦点还回去
+                this.m_TextBox.Focus();
+
 				this.UpdateListBox();
 				this.m_Settings.Write();
 				this.RefreshFindResults(true);
@@ -1339,6 +1381,9 @@ namespace Company.VSAnything
 		{
 			if (this.m_Settings.SetFastFindShowFiles(this.m_FilesCheckBox.Checked, this.m_IsModal))
 			{
+                // 把焦点还回去
+                this.m_TextBox.Focus();
+
 				this.UpdateListBox();
 				this.m_Settings.Write();
 				this.RefreshFindResults(true);
@@ -1351,6 +1396,9 @@ namespace Company.VSAnything
 		{
 			if (this.m_Settings.SetMatchWholeWord(this.m_WholeWordCheckbox.Checked, this.m_IsModal))
 			{
+                // 把焦点还回去
+                this.m_TextBox.Focus();
+
 				this.m_Settings.Write();
 				this.RefreshFindResults(true);
 			}
@@ -1519,7 +1567,21 @@ namespace Company.VSAnything
 				this.m_SelectTextOnNextFocus = false;
                 //this.m_TextBox.SelectAll();
 			}
-            this.m_TextBox.Focus();
+            CheckBox checkbox = sender as CheckBox;
+            RadioButton radioBtn = sender as RadioButton;
+            if(checkbox != null)
+            {
+                // 如果获得焦点的是checkbox,等它执行完 Alt + 快捷键后，会把焦点设置回来
+            }
+            else if (radioBtn != null && !radioBtn.Checked)
+            {
+                // 只有在非check状态，它才会收到回调
+            }
+            else
+            {
+                this.m_TextBox.Focus(); 
+            }
+
 		}
 
 		private void ControlLostFocus(object sender, EventArgs e)
@@ -1543,17 +1605,18 @@ namespace Company.VSAnything
 		{
             this.m_FindTextCheckBox = new System.Windows.Forms.CheckBox();
             this.m_OptionsPanel = new System.Windows.Forms.Panel();
+            this.m_CheckBoxShowCurrFile = new System.Windows.Forms.CheckBox();
             this.m_FullPathTextBox = new System.Windows.Forms.Label();
-            this.button7 = new System.Windows.Forms.Button();
             this.m_WholeWordCheckbox = new System.Windows.Forms.CheckBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.m_FilesCheckBox = new System.Windows.Forms.CheckBox();
             this.m_TextBoxPanel = new System.Windows.Forms.Panel();
             this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
+            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.m_OptionsButton = new System.Windows.Forms.Button();
-            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.m_ListBox = new Company.VSAnything.MyListBox();
+            this.radioButton_And = new System.Windows.Forms.RadioButton();
+            this.radioButton_Or = new System.Windows.Forms.RadioButton();
             this.m_OptionsPanel.SuspendLayout();
             this.m_TextBoxPanel.SuspendLayout();
             this.m_TextBoxBorderPanel.SuspendLayout();
@@ -1561,95 +1624,81 @@ namespace Company.VSAnything
             // 
             // m_FindTextCheckBox
             // 
-            this.m_FindTextCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_FindTextCheckBox.AutoSize = true;
             this.m_FindTextCheckBox.Checked = true;
             this.m_FindTextCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_FindTextCheckBox.Location = new System.Drawing.Point(1228, 40);
+            this.m_FindTextCheckBox.Location = new System.Drawing.Point(87, 0);
             this.m_FindTextCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.m_FindTextCheckBox.Name = "m_FindTextCheckBox";
-            this.m_FindTextCheckBox.Size = new System.Drawing.Size(78, 16);
+            this.m_FindTextCheckBox.Size = new System.Drawing.Size(48, 16);
             this.m_FindTextCheckBox.TabIndex = 6;
-            this.m_FindTextCheckBox.Text = "Find Text";
+            this.m_FindTextCheckBox.Text = "&Text";
             this.m_FindTextCheckBox.UseVisualStyleBackColor = true;
             this.m_FindTextCheckBox.CheckedChanged += new System.EventHandler(this.FindTextCheckBoxChanged);
             // 
             // m_OptionsPanel
             // 
+            this.m_OptionsPanel.Controls.Add(this.radioButton_Or);
+            this.m_OptionsPanel.Controls.Add(this.radioButton_And);
+            this.m_OptionsPanel.Controls.Add(this.m_CheckBoxShowCurrFile);
             this.m_OptionsPanel.Controls.Add(this.m_FullPathTextBox);
-            this.m_OptionsPanel.Controls.Add(this.button7);
             this.m_OptionsPanel.Controls.Add(this.m_WholeWordCheckbox);
-            this.m_OptionsPanel.Controls.Add(this.button2);
             this.m_OptionsPanel.Controls.Add(this.m_FindTextCheckBox);
             this.m_OptionsPanel.Controls.Add(this.m_FilesCheckBox);
             this.m_OptionsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_OptionsPanel.Location = new System.Drawing.Point(0, 751);
+            this.m_OptionsPanel.Location = new System.Drawing.Point(0, 817);
             this.m_OptionsPanel.Name = "m_OptionsPanel";
-            this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 108);
+            this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 42);
             this.m_OptionsPanel.TabIndex = 0;
+            // 
+            // m_CheckBoxShowCurrFile
+            // 
+            this.m_CheckBoxShowCurrFile.AccessibleName = "";
+            this.m_CheckBoxShowCurrFile.AutoSize = true;
+            this.m_CheckBoxShowCurrFile.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.m_CheckBoxShowCurrFile.Location = new System.Drawing.Point(0, 26);
+            this.m_CheckBoxShowCurrFile.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
+            this.m_CheckBoxShowCurrFile.Name = "m_CheckBoxShowCurrFile";
+            this.m_CheckBoxShowCurrFile.Size = new System.Drawing.Size(1634, 16);
+            this.m_CheckBoxShowCurrFile.TabIndex = 14;
+            this.m_CheckBoxShowCurrFile.Text = "Show &Current File Result Only";
+            this.m_CheckBoxShowCurrFile.UseVisualStyleBackColor = true;
+            this.m_CheckBoxShowCurrFile.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // m_FullPathTextBox
             // 
             this.m_FullPathTextBox.AutoSize = true;
-            this.m_FullPathTextBox.Location = new System.Drawing.Point(3, 22);
+            this.m_FullPathTextBox.Dock = System.Windows.Forms.DockStyle.Right;
+            this.m_FullPathTextBox.Location = new System.Drawing.Point(1634, 16);
             this.m_FullPathTextBox.Name = "m_FullPathTextBox";
             this.m_FullPathTextBox.Size = new System.Drawing.Size(59, 12);
             this.m_FullPathTextBox.TabIndex = 10;
             this.m_FullPathTextBox.Text = "full path";
             // 
-            // button7
-            // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(1535, 41);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(126, 46);
-            this.button7.TabIndex = 14;
-            this.button7.Text = "Help";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.HelpButtonClicked);
-            // 
             // m_WholeWordCheckbox
             // 
-            this.m_WholeWordCheckbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_WholeWordCheckbox.AutoSize = true;
-            this.m_WholeWordCheckbox.Checked = true;
-            this.m_WholeWordCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_WholeWordCheckbox.Location = new System.Drawing.Point(1234, 8);
+            this.m_WholeWordCheckbox.Location = new System.Drawing.Point(178, 0);
             this.m_WholeWordCheckbox.Margin = new System.Windows.Forms.Padding(2);
             this.m_WholeWordCheckbox.Name = "m_WholeWordCheckbox";
             this.m_WholeWordCheckbox.Size = new System.Drawing.Size(84, 16);
             this.m_WholeWordCheckbox.TabIndex = 13;
-            this.m_WholeWordCheckbox.Text = "Whole Word";
+            this.m_WholeWordCheckbox.Text = "&Whole Word";
             this.m_WholeWordCheckbox.UseVisualStyleBackColor = false;
             this.m_WholeWordCheckbox.CheckedChanged += new System.EventHandler(this.MatchWholeWordCheckedChanged);
             // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(1535, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(126, 43);
-            this.button2.TabIndex = 11;
-            this.button2.Text = "Rescan";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.RescanButtonClicked);
-            // 
             // m_FilesCheckBox
             // 
-            this.m_FilesCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.m_FilesCheckBox.AutoSize = true;
             this.m_FilesCheckBox.Checked = true;
             this.m_FilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_FilesCheckBox.Location = new System.Drawing.Point(1234, 72);
-            this.m_FilesCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.m_FilesCheckBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.m_FilesCheckBox.Location = new System.Drawing.Point(0, 0);
+            this.m_FilesCheckBox.Margin = new System.Windows.Forms.Padding(10, 2, 2, 2);
             this.m_FilesCheckBox.Name = "m_FilesCheckBox";
-            this.m_FilesCheckBox.Size = new System.Drawing.Size(84, 16);
+            this.m_FilesCheckBox.Size = new System.Drawing.Size(1693, 16);
             this.m_FilesCheckBox.TabIndex = 4;
-            this.m_FilesCheckBox.Text = "Find Files";
+            this.m_FilesCheckBox.Text = "&Files";
             this.m_FilesCheckBox.UseVisualStyleBackColor = true;
             this.m_FilesCheckBox.CheckedChanged += new System.EventHandler(this.FilesCheckBoxChanged);
             // 
@@ -1659,7 +1708,7 @@ namespace Company.VSAnything
             this.m_TextBoxPanel.Controls.Add(this.m_TextBoxBorderPanel);
             this.m_TextBoxPanel.Controls.Add(this.m_OptionsButton);
             this.m_TextBoxPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 728);
+            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 794);
             this.m_TextBoxPanel.Name = "m_TextBoxPanel";
             this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 23);
             this.m_TextBoxPanel.TabIndex = 0;
@@ -1675,6 +1724,19 @@ namespace Company.VSAnything
             this.m_TextBoxBorderPanel.Name = "m_TextBoxBorderPanel";
             this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1645, 23);
             this.m_TextBoxBorderPanel.TabIndex = 0;
+            // 
+            // m_TextBox
+            // 
+            this.m_TextBox.BackColor = System.Drawing.Color.Black;
+            this.m_TextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.m_TextBox.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_TextBox.ForeColor = System.Drawing.Color.White;
+            this.m_TextBox.Location = new System.Drawing.Point(0, 0);
+            this.m_TextBox.Name = "m_TextBox";
+            this.m_TextBox.Size = new System.Drawing.Size(1594, 23);
+            this.m_TextBox.TabIndex = 0;
+            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
+            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // button1
             // 
@@ -1704,19 +1766,6 @@ namespace Company.VSAnything
             this.m_OptionsButton.UseVisualStyleBackColor = false;
             this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
             // 
-            // m_TextBox
-            // 
-            this.m_TextBox.BackColor = System.Drawing.Color.Black;
-            this.m_TextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_TextBox.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_TextBox.ForeColor = System.Drawing.Color.White;
-            this.m_TextBox.Location = new System.Drawing.Point(0, 0);
-            this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1594, 23);
-            this.m_TextBox.TabIndex = 0;
-            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
-            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
-            // 
             // m_ListBox
             // 
             this.m_ListBox.BackColor = System.Drawing.Color.Black;
@@ -1744,6 +1793,30 @@ namespace Company.VSAnything
             this.m_ListBox.SelectedIndexchanged += new Company.VSAnything.MyListBox.SelectedIndexchangedHandler(this.ListBoxSelectedIndexChanged);
             this.m_ListBox.onItemClicked += new Company.VSAnything.MyListBox.ItemDoubleClickedHandler(this.ListBoxItemDoubleClicked);
             // 
+            // radioButton_And
+            // 
+            this.radioButton_And.AutoSize = true;
+            this.radioButton_And.Checked = true;
+            this.radioButton_And.Location = new System.Drawing.Point(280, -1);
+            this.radioButton_And.Name = "radioButton_And";
+            this.radioButton_And.Size = new System.Drawing.Size(41, 16);
+            this.radioButton_And.TabIndex = 15;
+            this.radioButton_And.TabStop = true;
+            this.radioButton_And.Text = "&And";
+            this.radioButton_And.UseVisualStyleBackColor = true;
+            this.radioButton_And.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
+            // 
+            // radioButton_Or
+            // 
+            this.radioButton_Or.AutoSize = true;
+            this.radioButton_Or.Location = new System.Drawing.Point(280, 16);
+            this.radioButton_Or.Name = "radioButton_Or";
+            this.radioButton_Or.Size = new System.Drawing.Size(35, 16);
+            this.radioButton_Or.TabIndex = 16;
+            this.radioButton_Or.Text = "&Or";
+            this.radioButton_Or.UseVisualStyleBackColor = true;
+            this.radioButton_Or.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
+            // 
             // FastFindControl
             // 
             this.BackColor = System.Drawing.Color.Gray;
@@ -1763,5 +1836,25 @@ namespace Company.VSAnything
 
 		}
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            // 把焦点还回去
+            this.m_TextBox.Focus();
+
+            this.UpdateFilesToSearch();
+            this.UpdateListBox();
+            this.RefreshFindResults(true);
+            
+        }
+       
+
+        private void radioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            // 把焦点还回去
+            this.m_TextBox.Focus();
+
+            this.UpdateListBox();
+            this.RefreshFindResults(true);
+        }
  	}
 }

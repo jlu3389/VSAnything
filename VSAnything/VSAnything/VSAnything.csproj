@@ -166,7 +166,7 @@
     <Compile Include="VSAnything\Core\DirectoryWatcher.cs" />
     <Compile Include="VSAnything\Core\DTE.cs" />
     <Compile Include="VSAnything\Core\EscapeKeyPressedHandler.cs" />
-    <Compile Include="VSAnything\Core\FastFindCmd.cs" />
+    <Compile Include="VSAnything\VSPackage\FastFindCmd.cs" />
     <Compile Include="VSAnything\UI\FastFindControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -183,7 +183,7 @@
     </Compile>
     <Compile Include="VSAnything\Core\FastFindToolWindowPane.cs" />
     <Compile Include="VSAnything\Core\FastFindVersion.cs" />
-    <Compile Include="VSAnything\Core\FastFindWindowCmd.cs" />
+    <Compile Include="VSAnything\VSPackage\FastFindWindowCmd.cs" />
     <Compile Include="VSAnything\Core\FileChangedHandler.cs" />
     <Compile Include="VSAnything\Core\FileExt.cs" />
     <Compile Include="VSAnything\Core\FileFinder.cs" />
@@ -246,7 +246,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="VSAnything\UI\FastFindControl.resx" />
+    <EmbeddedResource Include="VSAnything\UI\FastFindControl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="VSAnything\UI\FastFindForm.resx" />
     <EmbeddedResource Include="VSAnything\UI\Resource1.resx" />
     <EmbeddedResource Include="VSAnything\UI\SettingsDialog.resx" />
