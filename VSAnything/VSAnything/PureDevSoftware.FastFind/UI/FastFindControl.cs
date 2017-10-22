@@ -182,69 +182,29 @@ namespace Company.VSAnything
 
 		private bool m_SelectTextOnNextFocus = true;
 
-		private IContainer components;
+        private IContainer components;
 
-		private ComboBox m_FileExtComboBox;
+        private CheckBox m_FindTextCheckBox;
 
-		private CheckBox m_FindTextCheckBox;
+        private Panel m_OptionsPanel;
 
-		private MyListBox m_ListBox;
-
-		private Panel m_OptionsPanel;
-
-		private Label label1;
-
-		private CheckBox m_WildcardsCheckBox;
-
-		private CheckBox m_FilesCheckBox;
-
-		private Panel m_BottomPanel;
-
-		private FastFindTextBox m_TextBox;
-
-		private Button m_CancelButton;
-
-		private Button m_OpenButton;
+        private CheckBox m_FilesCheckBox;
 
 		private Button m_OptionsButton;
 
-		private Panel m_TextBoxPanel;
+        private Panel m_TextBoxPanel;
 
-		private CheckBox m_SolutionFilesMatchCaseCheckBox;
+        private Label m_FullPathTextBox;
 
-		private CheckBox m_FindTextMatchCaseCheckBox;
+        private Button button2;
 
-		private Label m_FullPathTextBox;
+        private CheckBox m_WholeWordCheckbox;
 
-		private Panel m_TextBoxBorderPanel;
-
-		private Button button1;
-
-		private Button button2;
-
-		private CheckBox m_LogicalOperatorsCheckBox;
-
-		private Panel m_TipsPanel;
-
-		private Button button4;
-
-		private Button button3;
-
-		private Panel panel1;
-
-        private Label label2;
-
-		private CheckBox m_WholeWordCheckbox;
-
-		private Button button5;
-
-		private Button button6;
-
-		private Button button7;
-        private Label m_TipLinkLabel;
-        private Label m_TipLabel;
-
-		private CheckBox m_RegExpCheckBox;
+        private Button button7;
+        private Panel m_TextBoxBorderPanel;
+        private FastFindTextBox m_TextBox;
+        private Button button1;
+        private MyListBox m_ListBox;
 
 		[method: CompilerGenerated]
 		[CompilerGenerated]
@@ -334,7 +294,6 @@ namespace Company.VSAnything
 			this.m_IsModal = is_modal;
 			AppearanceDialogPage appearance_settings = VSAnythingPackage.Inst.GetAppearanceDialogPage();
 			this.m_OptionsPanel.Visible = this.m_Settings.GetOptionsPanelVisible(is_modal);
-			this.m_FileExtComboBox.Text = this.m_Settings.GetFastFindFileExt(is_modal);
 			Font font = new Font(appearance_settings.FontName, appearance_settings.FontSize);
 			this.BackColor = appearance_settings.Colours.m_ControlColour;
 			this.ForeColor = Utils.ModifyColour(this.BackColor, 100);
@@ -348,16 +307,9 @@ namespace Company.VSAnything
 			this.m_TextBox.ForeColor = appearance_settings.Colours.m_ForeColour;
 			this.m_TextBoxBorderPanel.BackColor = appearance_settings.Colours.m_BackColour;
 			this.m_TextBoxPanel.Size = new Size(this.m_TextBoxPanel.Width, font.Height + 8);
-			this.m_FileExtComboBox.BackColor = appearance_settings.Colours.m_BackColour;
-			this.m_FileExtComboBox.ForeColor = appearance_settings.Colours.m_ForeColour;
 			this.m_FilesCheckBox.Checked = this.m_Settings.GetFastFindShowFiles(is_modal);
 			this.m_FindTextCheckBox.Checked = this.m_Settings.GetFastFindFindText(is_modal);
 			this.m_WholeWordCheckbox.Checked = this.m_Settings.GetMatchWholeWord(is_modal);
-			this.m_RegExpCheckBox.Checked = this.m_Settings.GetRegExpression(is_modal);
-			this.m_WildcardsCheckBox.Checked = this.m_Settings.GetFastFindWildcards(is_modal);
-			this.m_FindTextMatchCaseCheckBox.Checked = this.m_Settings.GetFindTextMatchCase(is_modal);
-			this.m_LogicalOperatorsCheckBox.Checked = this.m_Settings.GetUseLogicalOperators(is_modal);
-			this.m_SolutionFilesMatchCaseCheckBox.Checked = this.m_Settings.GetSolutionFilesMatchCase(is_modal);
 			this.m_FullPathTextBox.Text = "";
 			this.InitialiseTipsPanel();
 			this.m_UpdateTimer.Tick += new EventHandler(this.TimerTick);
@@ -367,12 +319,7 @@ namespace Company.VSAnything
 			this.m_ProgressBar.Colour = appearance_settings.Colours.m_SelectColour;
 			this.m_ProgressBar.Size = new Size(base.ClientSize.Width, 2);
 			this.m_ProgressBar.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
-			this.m_BottomPanel.Controls.Add(this.m_ProgressBar);
 			this.m_ProgressBar.Visible = false;
-			if (!is_modal)
-			{
-				this.m_BottomPanel.Visible = false;
-			}
 			if (!string.IsNullOrEmpty(initial_text))
 			{
 				this.m_IgnoreTextBoxTextChanges = true;
@@ -384,7 +331,6 @@ namespace Company.VSAnything
 			this.m_TextBox.Focus();
 			this.HookEvents();
 			this.SetSolutionFilename(this.m_SolutionFiles.SolutionFilename);
-			this.UpdateExtToScan();
 			this.UpdateFilesToSearchAndRefresh();
 			arg_429_0.Stop();
 		}
@@ -662,7 +608,7 @@ namespace Company.VSAnything
 			{
 				return;
 			}
-			this.m_FileFinder.Find(this.m_TextBox.Text, this.m_SolutionFiles.SolutionRootDir, this.m_SolutionFilesMatchCaseCheckBox.Checked, this.m_WildcardsCheckBox.Checked, this.IsEnteringPath, this.m_IsModal, new FindFilesFinishedHandler(this.FileFinderFinished));
+			this.m_FileFinder.Find(this.m_TextBox.Text, this.m_SolutionFiles.SolutionRootDir, false, false, this.IsEnteringPath, this.m_IsModal, new FindFilesFinishedHandler(this.FileFinderFinished));
 		}
 
 		private string GetFirstSelectedFile()
@@ -1115,7 +1061,7 @@ namespace Company.VSAnything
 					{
 						m_Pattern = sub_pattern,
 						m_Operator = op,
-						m_UseWildcard = (this.m_WildcardsCheckBox.Checked && sub_pattern.Contains('*'))
+						m_UseWildcard = (false && sub_pattern.Contains('*'))
 					});
 					op = next_op;
 				}
@@ -1125,7 +1071,7 @@ namespace Company.VSAnything
 					{
 						m_Pattern = pattern_string,
 						m_Operator = op,
-						m_UseWildcard = (this.m_WildcardsCheckBox.Checked && pattern_string.Contains('*'))
+						m_UseWildcard = (false && pattern_string.Contains('*'))
 					});
 				}
 				return patterns_list.ToArray();
@@ -1135,7 +1081,7 @@ namespace Company.VSAnything
 				Pattern[] expr_158 = new Pattern[1];
 				expr_158[0].m_Pattern = pattern_string;
 				expr_158[0].m_Operator = Pattern.Operator.OR;
-				expr_158[0].m_UseWildcard = (this.m_WildcardsCheckBox.Checked && pattern_string.Contains('*'));
+				expr_158[0].m_UseWildcard = (false && pattern_string.Contains('*'));
 				return expr_158;
 			}
 			return new Pattern[0];
@@ -1184,7 +1130,7 @@ namespace Company.VSAnything
 				this.StripOperator(ref text, " WORD", ref match_whole_word_override);
 				this.StripOperator(ref text, " CASE", ref case_override);
 				Pattern[] patterns = this.SplitPattern(text);
-				if (!this.m_RegExpCheckBox.Checked)
+				if (!false)
 				{
 					for (int i = 0; i < patterns.Length; i++)
 					{
@@ -1210,7 +1156,7 @@ namespace Company.VSAnything
 				request.m_TextBoxText = this.m_TextBox.Text;
 				request.FindFinished = new FindFinishedHandler(this.FindTextFinished);
 				SettingsDialogPage settings = VSAnythingPackage.Inst.GetSettingsDialogPage();
-				this.m_TextFinder.Find(request, this.m_FilesToSearch, FastFindControl.m_UnsavedDocuments, settings.FindTextPathMode, this.m_SolutionFiles.SolutionRootDir, ext_override, this.m_WholeWordCheckbox.Checked | match_whole_word_override, this.m_RegExpCheckBox.Checked);
+				this.m_TextFinder.Find(request, this.m_FilesToSearch, FastFindControl.m_UnsavedDocuments, settings.FindTextPathMode, this.m_SolutionFiles.SolutionRootDir, ext_override, this.m_WholeWordCheckbox.Checked | match_whole_word_override,false);
 			}
 		}
 
@@ -1463,54 +1409,11 @@ namespace Company.VSAnything
 			}
 		}
 
-		private void WildcardsCheckboxChanged(object sender, EventArgs e)
-		{
-			if (this.m_Settings.SetFastFindWildcards(this.m_WildcardsCheckBox.Checked, this.m_IsModal))
-			{
-				this.m_Settings.Write();
-				this.RefreshFindResults(true);
-			}
-		}
+
 
 		private void MatchWholeWordCheckedChanged(object sender, EventArgs e)
 		{
 			if (this.m_Settings.SetMatchWholeWord(this.m_WholeWordCheckbox.Checked, this.m_IsModal))
-			{
-				this.m_Settings.Write();
-				this.RefreshFindResults(true);
-			}
-		}
-
-		private void FindTextMatchCaseCheckBoxChanged(object sender, EventArgs e)
-		{
-			if (this.m_Settings.SetFindTextMatchCase(this.m_FindTextMatchCaseCheckBox.Checked, this.m_IsModal))
-			{
-				this.m_Settings.Write();
-				this.RefreshFindResults(true);
-			}
-		}
-
-		private void LogicalOpsCheckboxChanged(object sender, EventArgs e)
-		{
-			if (this.m_Settings.SetUseLogicalOperators(this.m_LogicalOperatorsCheckBox.Checked, this.m_IsModal))
-			{
-				this.m_Settings.Write();
-				this.RefreshFindResults(true);
-			}
-		}
-
-		private void SolutionFilesMatchCaseCheckBoxChanged(object sender, EventArgs e)
-		{
-			if (this.m_Settings.SetSolutionFilesMatchCase(this.m_SolutionFilesMatchCaseCheckBox.Checked, this.m_IsModal))
-			{
-				this.m_Settings.Write();
-				this.RefreshFindResults(true);
-			}
-		}
-
-		private void RegExpressionCheckBoxchanged(object sender, EventArgs e)
-		{
-			if (this.m_Settings.SetRegExpression(this.m_RegExpCheckBox.Checked, this.m_IsModal))
 			{
 				this.m_Settings.Write();
 				this.RefreshFindResults(true);
@@ -1522,15 +1425,6 @@ namespace Company.VSAnything
 			bool visible = !this.m_Settings.GetOptionsPanelVisible(this.m_IsModal);
 			this.m_Settings.SetOptionsPanelVisible(visible, this.m_IsModal);
 			this.m_OptionsPanel.Visible = visible;
-		}
-
-		private void ExtTypesControlLeaveEvent(object sender, EventArgs e)
-		{
-			if (this.m_Settings.SetFastFindFileExt(this.m_FileExtComboBox.Text, this.m_IsModal))
-			{
-				this.UpdateExtToScan();
-				this.m_Settings.Write();
-			}
 		}
 
 		private void OpenButtonClicked(object sender, EventArgs e)
@@ -1594,44 +1488,6 @@ namespace Company.VSAnything
 			this.m_DTE.ActivateActiveDocument();
 		}
 
-		private void UpdateExtToScan()
-		{
-			ICollection<string> old_ext_to_scan = VSAnythingPackage.Inst.GetSettingsDialogPage().ExtList;
-			Set<string> ext_to_scan;
-			if (this.m_FileExtComboBox.Text == "Default" || string.IsNullOrEmpty(this.m_FileExtComboBox.Text))
-			{
-				ext_to_scan = new Set<string>(old_ext_to_scan);
-			}
-			else
-			{
-				ext_to_scan = new Set<string>(this.m_FileExtComboBox.Text.Split(new char[]
-				{
-					';'
-				}));
-			}
-			Set<string> ext_to_scan_lower = Utils.ToLower(ext_to_scan);
-			if (!ext_to_scan_lower.SequenceEqual(this.m_ExtToScan))
-			{
-				this.m_ExtToScan = ext_to_scan_lower;
-				bool found_new_ext = false;
-				Set<string> settings_ext_list = Utils.ToLower(new Set<string>(old_ext_to_scan));
-				foreach (string ext in ext_to_scan_lower)
-				{
-					if (!settings_ext_list.Contains(ext))
-					{
-						settings_ext_list.Add(ext);
-						found_new_ext = true;
-					}
-				}
-				if (found_new_ext)
-				{
-					VSAnythingPackage.Inst.GetSettingsDialogPage().ExtList = settings_ext_list.ToArray();
-					VSAnythingPackage.Inst.OnSettingsExtListChanged();
-				}
-				this.UpdateFilesToSearchAndRefresh();
-				this.StartGettingOpenFiles();
-			}
-		}
 
 		private void TextBoxKeyPress(object sender, KeyPressEventArgs e)
 		{
@@ -1645,12 +1501,6 @@ namespace Company.VSAnything
 		private void DisableTipsButton(object sender, EventArgs e)
 		{
 			VSAnythingPackage.Inst.GetSettingsDialogPage().EnableTips = false;
-			this.m_TipsPanel.Visible = false;
-		}
-
-		private void HideTipsButton(object sender, EventArgs e)
-		{
-			this.m_TipsPanel.Visible = false;
 		}
 
 		private void InitialiseTipsPanel()
@@ -1659,7 +1509,6 @@ namespace Company.VSAnything
 			int days_since_last_tip = DateTime.Now.DayOfYear - this.m_Settings.LastShowTipDay;
 			this.m_Settings.LastShowTipDay = DateTime.Now.DayOfYear;
 			bool tips_visible = arg_41_0 && days_since_last_tip != 0;
-			this.m_TipsPanel.Visible = tips_visible;
 			if (tips_visible)
 			{
 				this.ShowNextTip();
@@ -1675,7 +1524,6 @@ namespace Company.VSAnything
 			expr_29.TipIndex = tipIndex + 1;
 			string tip_text = arg_39_0[tipIndex];
 			bool show_link_label = tip_text.Contains("link(");
-			this.m_TipLinkLabel.Visible = show_link_label;
 			if (show_link_label)
 			{
 				int index = tip_text.IndexOf("link(");
@@ -1687,15 +1535,11 @@ namespace Company.VSAnything
 				});
 				string link_text = expr_99[0];
 				string arg_AD_0 = expr_99[1];
-				this.m_TipLinkLabel.Text = link_text;
 				FastFindControl.m_TipLinkValue = arg_AD_0;
 				tip_text = tip_text.Substring(0, index);
 				Graphics graphics = base.CreateGraphics();
-				int width = Utils.GetStringWidth(tip_text, tip_text.Length, graphics, this.m_TipLabel.Font, StringFormat.GenericDefault);
-				this.m_TipLinkLabel.Location = new Point(this.m_TipLabel.Left + width, this.m_TipLabel.Top + this.m_TipLabel.Height / 2 - this.m_TipLinkLabel.Height / 2);
 				graphics.Dispose();
 			}
-			this.m_TipLabel.Text = tip_text;
 		}
 
 		private void TipLinkLabelClicked(object sender, EventArgs e)
@@ -1750,67 +1594,23 @@ namespace Company.VSAnything
 
 		private void InitializeComponent()
 		{
-            this.m_FileExtComboBox = new System.Windows.Forms.ComboBox();
             this.m_FindTextCheckBox = new System.Windows.Forms.CheckBox();
             this.m_OptionsPanel = new System.Windows.Forms.Panel();
-            this.m_RegExpCheckBox = new System.Windows.Forms.CheckBox();
+            this.m_FullPathTextBox = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
             this.m_WholeWordCheckbox = new System.Windows.Forms.CheckBox();
-            this.m_LogicalOperatorsCheckBox = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
-            this.m_SolutionFilesMatchCaseCheckBox = new System.Windows.Forms.CheckBox();
-            this.m_FindTextMatchCaseCheckBox = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.m_WildcardsCheckBox = new System.Windows.Forms.CheckBox();
             this.m_FilesCheckBox = new System.Windows.Forms.CheckBox();
-            this.m_BottomPanel = new System.Windows.Forms.Panel();
-            this.m_FullPathTextBox = new System.Windows.Forms.Label();
-            this.m_CancelButton = new System.Windows.Forms.Button();
-            this.m_OpenButton = new System.Windows.Forms.Button();
             this.m_TextBoxPanel = new System.Windows.Forms.Panel();
-            this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
             this.m_OptionsButton = new System.Windows.Forms.Button();
-            this.m_TipsPanel = new System.Windows.Forms.Panel();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
-            this.m_TipLabel = new System.Windows.Forms.Label();
-            this.m_TipLinkLabel = new System.Windows.Forms.Label();
-            this.m_ListBox = new Company.VSAnything.MyListBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
             this.m_TextBox = new Company.VSAnything.FastFindTextBox();
+            this.m_ListBox = new Company.VSAnything.MyListBox();
             this.m_OptionsPanel.SuspendLayout();
-            this.m_BottomPanel.SuspendLayout();
             this.m_TextBoxPanel.SuspendLayout();
             this.m_TextBoxBorderPanel.SuspendLayout();
-            this.m_TipsPanel.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // m_FileExtComboBox
-            // 
-            this.m_FileExtComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_FileExtComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.m_FileExtComboBox.FormattingEnabled = true;
-            this.m_FileExtComboBox.Items.AddRange(new object[] {
-            "Default",
-            ".c;.cpp;.cxx;.cc;.tli;.tlh;.h;.hpp;.hxx;.hh;.inl;.rc;.resx;.idl;.asm;.inc",
-            ".cs;.resx;.resw;.xsd;.wsdl;.xaml;.xml;.htm;.html;.css",
-            ".vb;.resx;.resw;.xsd;.wsdl;.xaml;.xml;.htm;.html;.css",
-            ".srf;.htm;.html;.xml;.gif;.jpg;.png;.css;.disco",
-            ".xml;.xsl;.xslt;.xsd;.dtd",
-            ".py",
-            ".txt",
-            "."});
-            this.m_FileExtComboBox.Location = new System.Drawing.Point(73, 6);
-            this.m_FileExtComboBox.Name = "m_FileExtComboBox";
-            this.m_FileExtComboBox.Size = new System.Drawing.Size(1177, 32);
-            this.m_FileExtComboBox.TabIndex = 2;
-            this.m_FileExtComboBox.Leave += new System.EventHandler(this.ExtTypesControlLeaveEvent);
             // 
             // m_FindTextCheckBox
             // 
@@ -1818,7 +1618,7 @@ namespace Company.VSAnything
             this.m_FindTextCheckBox.AutoSize = true;
             this.m_FindTextCheckBox.Checked = true;
             this.m_FindTextCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_FindTextCheckBox.Location = new System.Drawing.Point(1373, 29);
+            this.m_FindTextCheckBox.Location = new System.Drawing.Point(1156, 40);
             this.m_FindTextCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.m_FindTextCheckBox.Name = "m_FindTextCheckBox";
             this.m_FindTextCheckBox.Size = new System.Drawing.Size(150, 28);
@@ -1829,47 +1629,35 @@ namespace Company.VSAnything
             // 
             // m_OptionsPanel
             // 
-            this.m_OptionsPanel.Controls.Add(this.m_RegExpCheckBox);
+            this.m_OptionsPanel.Controls.Add(this.m_FullPathTextBox);
             this.m_OptionsPanel.Controls.Add(this.button7);
             this.m_OptionsPanel.Controls.Add(this.m_WholeWordCheckbox);
-            this.m_OptionsPanel.Controls.Add(this.m_LogicalOperatorsCheckBox);
             this.m_OptionsPanel.Controls.Add(this.button2);
-            this.m_OptionsPanel.Controls.Add(this.m_SolutionFilesMatchCaseCheckBox);
-            this.m_OptionsPanel.Controls.Add(this.m_FindTextMatchCaseCheckBox);
-            this.m_OptionsPanel.Controls.Add(this.label1);
-            this.m_OptionsPanel.Controls.Add(this.m_FileExtComboBox);
             this.m_OptionsPanel.Controls.Add(this.m_FindTextCheckBox);
-            this.m_OptionsPanel.Controls.Add(this.m_WildcardsCheckBox);
             this.m_OptionsPanel.Controls.Add(this.m_FilesCheckBox);
             this.m_OptionsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_OptionsPanel.Location = new System.Drawing.Point(0, 781);
+            this.m_OptionsPanel.Location = new System.Drawing.Point(0, 751);
             this.m_OptionsPanel.Name = "m_OptionsPanel";
-            this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 48);
+            this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 108);
             this.m_OptionsPanel.TabIndex = 0;
             // 
-            // m_RegExpCheckBox
+            // m_FullPathTextBox
             // 
-            this.m_RegExpCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_RegExpCheckBox.AutoSize = true;
-            this.m_RegExpCheckBox.Checked = true;
-            this.m_RegExpCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_RegExpCheckBox.Location = new System.Drawing.Point(1153, 29);
-            this.m_RegExpCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.m_RegExpCheckBox.Name = "m_RegExpCheckBox";
-            this.m_RegExpCheckBox.Size = new System.Drawing.Size(210, 28);
-            this.m_RegExpCheckBox.TabIndex = 15;
-            this.m_RegExpCheckBox.Text = "Reg Expression";
-            this.m_RegExpCheckBox.UseVisualStyleBackColor = false;
-            this.m_RegExpCheckBox.CheckedChanged += new System.EventHandler(this.RegExpressionCheckBoxchanged);
+            this.m_FullPathTextBox.AutoSize = true;
+            this.m_FullPathTextBox.Location = new System.Drawing.Point(3, 22);
+            this.m_FullPathTextBox.Name = "m_FullPathTextBox";
+            this.m_FullPathTextBox.Size = new System.Drawing.Size(118, 24);
+            this.m_FullPathTextBox.TabIndex = 10;
+            this.m_FullPathTextBox.Text = "full path";
             // 
             // button7
             // 
             this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(1634, 26);
+            this.button7.Location = new System.Drawing.Point(1535, 41);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(56, 22);
+            this.button7.Size = new System.Drawing.Size(126, 46);
             this.button7.TabIndex = 14;
             this.button7.Text = "Help";
             this.button7.UseVisualStyleBackColor = true;
@@ -1881,7 +1669,7 @@ namespace Company.VSAnything
             this.m_WholeWordCheckbox.AutoSize = true;
             this.m_WholeWordCheckbox.Checked = true;
             this.m_WholeWordCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_WholeWordCheckbox.Location = new System.Drawing.Point(1187, 8);
+            this.m_WholeWordCheckbox.Location = new System.Drawing.Point(1156, 8);
             this.m_WholeWordCheckbox.Margin = new System.Windows.Forms.Padding(2);
             this.m_WholeWordCheckbox.Name = "m_WholeWordCheckbox";
             this.m_WholeWordCheckbox.Size = new System.Drawing.Size(162, 28);
@@ -1890,83 +1678,18 @@ namespace Company.VSAnything
             this.m_WholeWordCheckbox.UseVisualStyleBackColor = false;
             this.m_WholeWordCheckbox.CheckedChanged += new System.EventHandler(this.MatchWholeWordCheckedChanged);
             // 
-            // m_LogicalOperatorsCheckBox
-            // 
-            this.m_LogicalOperatorsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_LogicalOperatorsCheckBox.AutoSize = true;
-            this.m_LogicalOperatorsCheckBox.Checked = true;
-            this.m_LogicalOperatorsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_LogicalOperatorsCheckBox.Location = new System.Drawing.Point(1275, 29);
-            this.m_LogicalOperatorsCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.m_LogicalOperatorsCheckBox.Name = "m_LogicalOperatorsCheckBox";
-            this.m_LogicalOperatorsCheckBox.Size = new System.Drawing.Size(174, 28);
-            this.m_LogicalOperatorsCheckBox.TabIndex = 12;
-            this.m_LogicalOperatorsCheckBox.Text = "Logical Ops";
-            this.m_LogicalOperatorsCheckBox.UseVisualStyleBackColor = false;
-            this.m_LogicalOperatorsCheckBox.CheckedChanged += new System.EventHandler(this.LogicalOpsCheckboxChanged);
-            // 
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(1634, 5);
+            this.button2.Location = new System.Drawing.Point(1535, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(56, 22);
+            this.button2.Size = new System.Drawing.Size(126, 43);
             this.button2.TabIndex = 11;
             this.button2.Text = "Rescan";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.RescanButtonClicked);
-            // 
-            // m_SolutionFilesMatchCaseCheckBox
-            // 
-            this.m_SolutionFilesMatchCaseCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_SolutionFilesMatchCaseCheckBox.AutoSize = true;
-            this.m_SolutionFilesMatchCaseCheckBox.Location = new System.Drawing.Point(1407, 8);
-            this.m_SolutionFilesMatchCaseCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.m_SolutionFilesMatchCaseCheckBox.Name = "m_SolutionFilesMatchCaseCheckBox";
-            this.m_SolutionFilesMatchCaseCheckBox.Size = new System.Drawing.Size(222, 28);
-            this.m_SolutionFilesMatchCaseCheckBox.TabIndex = 5;
-            this.m_SolutionFilesMatchCaseCheckBox.Text = "Match File Case";
-            this.m_SolutionFilesMatchCaseCheckBox.UseVisualStyleBackColor = true;
-            this.m_SolutionFilesMatchCaseCheckBox.CheckedChanged += new System.EventHandler(this.SolutionFilesMatchCaseCheckBoxChanged);
-            // 
-            // m_FindTextMatchCaseCheckBox
-            // 
-            this.m_FindTextMatchCaseCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_FindTextMatchCaseCheckBox.AutoSize = true;
-            this.m_FindTextMatchCaseCheckBox.Location = new System.Drawing.Point(1412, 29);
-            this.m_FindTextMatchCaseCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.m_FindTextMatchCaseCheckBox.Name = "m_FindTextMatchCaseCheckBox";
-            this.m_FindTextMatchCaseCheckBox.Size = new System.Drawing.Size(222, 28);
-            this.m_FindTextMatchCaseCheckBox.TabIndex = 7;
-            this.m_FindTextMatchCaseCheckBox.Text = "Match Text Case";
-            this.m_FindTextMatchCaseCheckBox.UseVisualStyleBackColor = true;
-            this.m_FindTextMatchCaseCheckBox.CheckedChanged += new System.EventHandler(this.FindTextMatchCaseCheckBoxChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 24);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "File Types";
-            // 
-            // m_WildcardsCheckBox
-            // 
-            this.m_WildcardsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_WildcardsCheckBox.AutoSize = true;
-            this.m_WildcardsCheckBox.Checked = true;
-            this.m_WildcardsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_WildcardsCheckBox.Location = new System.Drawing.Point(1290, 8);
-            this.m_WildcardsCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.m_WildcardsCheckBox.Name = "m_WildcardsCheckBox";
-            this.m_WildcardsCheckBox.Size = new System.Drawing.Size(150, 28);
-            this.m_WildcardsCheckBox.TabIndex = 3;
-            this.m_WildcardsCheckBox.Text = "Wildcards";
-            this.m_WildcardsCheckBox.UseVisualStyleBackColor = false;
-            this.m_WildcardsCheckBox.CheckedChanged += new System.EventHandler(this.WildcardsCheckboxChanged);
             // 
             // m_FilesCheckBox
             // 
@@ -1974,7 +1697,7 @@ namespace Company.VSAnything
             this.m_FilesCheckBox.AutoSize = true;
             this.m_FilesCheckBox.Checked = true;
             this.m_FilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_FilesCheckBox.Location = new System.Drawing.Point(1361, 8);
+            this.m_FilesCheckBox.Location = new System.Drawing.Point(1156, 72);
             this.m_FilesCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.m_FilesCheckBox.Name = "m_FilesCheckBox";
             this.m_FilesCheckBox.Size = new System.Drawing.Size(162, 28);
@@ -1983,73 +1706,29 @@ namespace Company.VSAnything
             this.m_FilesCheckBox.UseVisualStyleBackColor = true;
             this.m_FilesCheckBox.CheckedChanged += new System.EventHandler(this.FilesCheckBoxChanged);
             // 
-            // m_BottomPanel
-            // 
-            this.m_BottomPanel.Controls.Add(this.m_FullPathTextBox);
-            this.m_BottomPanel.Controls.Add(this.m_CancelButton);
-            this.m_BottomPanel.Controls.Add(this.m_OpenButton);
-            this.m_BottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_BottomPanel.Location = new System.Drawing.Point(0, 829);
-            this.m_BottomPanel.Margin = new System.Windows.Forms.Padding(2);
-            this.m_BottomPanel.Name = "m_BottomPanel";
-            this.m_BottomPanel.Size = new System.Drawing.Size(1693, 30);
-            this.m_BottomPanel.TabIndex = 0;
-            // 
-            // m_FullPathTextBox
-            // 
-            this.m_FullPathTextBox.AutoSize = true;
-            this.m_FullPathTextBox.Location = new System.Drawing.Point(3, 9);
-            this.m_FullPathTextBox.Name = "m_FullPathTextBox";
-            this.m_FullPathTextBox.Size = new System.Drawing.Size(118, 24);
-            this.m_FullPathTextBox.TabIndex = 10;
-            this.m_FullPathTextBox.Text = "full path";
-            // 
-            // m_CancelButton
-            // 
-            this.m_CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.m_CancelButton.ForeColor = System.Drawing.Color.Black;
-            this.m_CancelButton.Location = new System.Drawing.Point(1615, 4);
-            this.m_CancelButton.Name = "m_CancelButton";
-            this.m_CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.m_CancelButton.TabIndex = 9;
-            this.m_CancelButton.Text = "Cancel";
-            this.m_CancelButton.UseVisualStyleBackColor = true;
-            this.m_CancelButton.Click += new System.EventHandler(this.CancelButtonClicked);
-            // 
-            // m_OpenButton
-            // 
-            this.m_OpenButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_OpenButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.m_OpenButton.ForeColor = System.Drawing.Color.Black;
-            this.m_OpenButton.Location = new System.Drawing.Point(1542, 4);
-            this.m_OpenButton.Name = "m_OpenButton";
-            this.m_OpenButton.Size = new System.Drawing.Size(75, 23);
-            this.m_OpenButton.TabIndex = 8;
-            this.m_OpenButton.Text = "Open";
-            this.m_OpenButton.UseVisualStyleBackColor = true;
-            this.m_OpenButton.Click += new System.EventHandler(this.OpenButtonClicked);
-            // 
             // m_TextBoxPanel
             // 
+            this.m_TextBoxPanel.AutoSize = true;
             this.m_TextBoxPanel.Controls.Add(this.m_TextBoxBorderPanel);
             this.m_TextBoxPanel.Controls.Add(this.m_OptionsButton);
             this.m_TextBoxPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 756);
+            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 712);
             this.m_TextBoxPanel.Name = "m_TextBoxPanel";
-            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 25);
+            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 39);
             this.m_TextBoxPanel.TabIndex = 0;
             // 
-            // m_TextBoxBorderPanel
+            // m_OptionsButton
             // 
-            this.m_TextBoxBorderPanel.BackColor = System.Drawing.Color.Black;
-            this.m_TextBoxBorderPanel.Controls.Add(this.button1);
-            this.m_TextBoxBorderPanel.Controls.Add(this.m_TextBox);
-            this.m_TextBoxBorderPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.m_TextBoxBorderPanel.Location = new System.Drawing.Point(0, 0);
-            this.m_TextBoxBorderPanel.Name = "m_TextBoxBorderPanel";
-            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1670, 25);
-            this.m_TextBoxBorderPanel.TabIndex = 0;
+            this.m_OptionsButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.m_OptionsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.m_OptionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_OptionsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.m_OptionsButton.Location = new System.Drawing.Point(1645, 0);
+            this.m_OptionsButton.Name = "m_OptionsButton";
+            this.m_OptionsButton.Size = new System.Drawing.Size(48, 39);
+            this.m_OptionsButton.TabIndex = 1;
+            this.m_OptionsButton.UseVisualStyleBackColor = false;
+            this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
             // 
             // button1
             // 
@@ -2058,136 +1737,39 @@ namespace Company.VSAnything
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.button1.Location = new System.Drawing.Point(1651, 0);
+            this.button1.Location = new System.Drawing.Point(1594, 0);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(19, 25);
+            this.button1.Size = new System.Drawing.Size(51, 39);
             this.button1.TabIndex = 2;
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.OldSearchesDropDownButtonClicked);
             this.button1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OldSearchesDropDownButtonMouseDown);
             // 
-            // m_OptionsButton
+            // m_TextBoxBorderPanel
             // 
-            this.m_OptionsButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.m_OptionsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.m_OptionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_OptionsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.m_OptionsButton.Location = new System.Drawing.Point(1670, 0);
-            this.m_OptionsButton.Name = "m_OptionsButton";
-            this.m_OptionsButton.Size = new System.Drawing.Size(23, 25);
-            this.m_OptionsButton.TabIndex = 1;
-            this.m_OptionsButton.UseVisualStyleBackColor = false;
-            this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
+            this.m_TextBoxBorderPanel.AutoSize = true;
+            this.m_TextBoxBorderPanel.BackColor = System.Drawing.Color.Black;
+            this.m_TextBoxBorderPanel.Controls.Add(this.m_TextBox);
+            this.m_TextBoxBorderPanel.Controls.Add(this.button1);
+            this.m_TextBoxBorderPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.m_TextBoxBorderPanel.Location = new System.Drawing.Point(0, 0);
+            this.m_TextBoxBorderPanel.Name = "m_TextBoxBorderPanel";
+            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1645, 39);
+            this.m_TextBoxBorderPanel.TabIndex = 0;
             // 
-            // m_TipsPanel
+            // m_TextBox
             // 
-            this.m_TipsPanel.Controls.Add(this.button3);
-            this.m_TipsPanel.Controls.Add(this.button5);
-            this.m_TipsPanel.Controls.Add(this.button6);
-            this.m_TipsPanel.Controls.Add(this.button4);
-            this.m_TipsPanel.Controls.Add(this.m_TipLinkLabel);
-            this.m_TipsPanel.Controls.Add(this.panel1);
-            this.m_TipsPanel.Controls.Add(this.m_TipLabel);
-            this.m_TipsPanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.m_TipsPanel.Location = new System.Drawing.Point(0, 0);
-            this.m_TipsPanel.Name = "m_TipsPanel";
-            this.m_TipsPanel.Size = new System.Drawing.Size(1693, 23);
-            this.m_TipsPanel.TabIndex = 11;
-            // 
-            // button3
-            // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(1609, 2);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(81, 21);
-            this.button3.TabIndex = 13;
-            this.button3.Text = "Hide";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.HideTipsButton);
-            // 
-            // button5
-            // 
-            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button5.Location = new System.Drawing.Point(1573, 2);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(38, 21);
-            this.button5.TabIndex = 16;
-            this.button5.Text = ">";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.NextTipButtonClicked);
-            // 
-            // button6
-            // 
-            this.button6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button6.Location = new System.Drawing.Point(1537, 2);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(38, 21);
-            this.button6.TabIndex = 17;
-            this.button6.Text = "<";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.PrevTipButtonClicked);
-            // 
-            // button4
-            // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.FlatAppearance.BorderSize = 0;
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(1472, 2);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(67, 20);
-            this.button4.TabIndex = 14;
-            this.button4.Text = "Disable Tips";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.DisableTipsButton);
-            // 
-            // panel1
-            // 
-            this.panel1.BackColor = System.Drawing.Color.LemonChiffon;
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Location = new System.Drawing.Point(8, 4);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(39, 15);
-            this.panel1.TabIndex = 12;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(9, 2);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 24);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "TIP:";
-            // 
-            // m_TipLabel
-            // 
-            this.m_TipLabel.AutoSize = true;
-            this.m_TipLabel.Location = new System.Drawing.Point(53, 5);
-            this.m_TipLabel.Name = "m_TipLabel";
-            this.m_TipLabel.Size = new System.Drawing.Size(190, 24);
-            this.m_TipLabel.TabIndex = 1;
-            this.m_TipLabel.Text = "Did you know...";
-            // 
-            // m_TipLinkLabel
-            // 
-            this.m_TipLinkLabel.AutoSize = true;
-            this.m_TipLinkLabel.BackColor = System.Drawing.Color.LightGray;
-            this.m_TipLinkLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_TipLinkLabel.ForeColor = System.Drawing.Color.Blue;
-            this.m_TipLinkLabel.Location = new System.Drawing.Point(140, 2);
-            this.m_TipLinkLabel.Name = "m_TipLinkLabel";
-            this.m_TipLinkLabel.Padding = new System.Windows.Forms.Padding(2);
-            this.m_TipLinkLabel.Size = new System.Drawing.Size(278, 30);
-            this.m_TipLinkLabel.TabIndex = 15;
-            this.m_TipLinkLabel.Text = "www.puredevsoftware.com";
-            this.m_TipLinkLabel.Click += new System.EventHandler(this.TipLinkLabelClicked);
+            this.m_TextBox.BackColor = System.Drawing.Color.Black;
+            this.m_TextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.m_TextBox.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_TextBox.ForeColor = System.Drawing.Color.White;
+            this.m_TextBox.Location = new System.Drawing.Point(0, 0);
+            this.m_TextBox.Name = "m_TextBox";
+            this.m_TextBox.Size = new System.Drawing.Size(1594, 39);
+            this.m_TextBox.TabIndex = 0;
+            this.m_TextBox.EscapeKeyPressed += new Company.VSAnything.EscapeKeyPressedHandler(this.TextBoxEscapeKeyPressed);
+            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
+            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // m_ListBox
             // 
@@ -2196,7 +1778,7 @@ namespace Company.VSAnything
             this.m_ListBox.FindingTextPercent = 0;
             this.m_ListBox.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_ListBox.ForeColor = System.Drawing.Color.White;
-            this.m_ListBox.Location = new System.Drawing.Point(0, 23);
+            this.m_ListBox.Location = new System.Drawing.Point(0, 0);
             this.m_ListBox.MaxMatchCount = 0;
             this.m_ListBox.Name = "m_ListBox";
             this.m_ListBox.OnlyShowingMaxMatches = false;
@@ -2210,50 +1792,29 @@ namespace Company.VSAnything
             this.m_ListBox.ShowGettingSolutionFiles = false;
             this.m_ListBox.ShowNoItemsMessage = false;
             this.m_ListBox.ShowScanningFiles = false;
-            this.m_ListBox.Size = new System.Drawing.Size(1693, 733);
+            this.m_ListBox.Size = new System.Drawing.Size(1693, 859);
             this.m_ListBox.TabIndex = 10;
             this.m_ListBox.TabStop = false;
             this.m_ListBox.SelectedIndexchanged += new Company.VSAnything.MyListBox.SelectedIndexchangedHandler(this.ListBoxSelectedIndexChanged);
             this.m_ListBox.ItemDoubleClicked += new Company.VSAnything.MyListBox.ItemDoubleClickedHandler(this.ListBoxItemDoubleClicked);
             // 
-            // m_TextBox
-            // 
-            this.m_TextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_TextBox.BackColor = System.Drawing.Color.Black;
-            this.m_TextBox.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_TextBox.ForeColor = System.Drawing.Color.White;
-            this.m_TextBox.Location = new System.Drawing.Point(0, 3);
-            this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1648, 39);
-            this.m_TextBox.TabIndex = 0;
-            this.m_TextBox.EscapeKeyPressed += new Company.VSAnything.EscapeKeyPressedHandler(this.TextBoxEscapeKeyPressed);
-            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
-            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
-            // 
             // FastFindControl
             // 
             this.BackColor = System.Drawing.Color.Gray;
-            this.Controls.Add(this.m_ListBox);
-            this.Controls.Add(this.m_TipsPanel);
             this.Controls.Add(this.m_TextBoxPanel);
             this.Controls.Add(this.m_OptionsPanel);
-            this.Controls.Add(this.m_BottomPanel);
+            this.Controls.Add(this.m_ListBox);
             this.Name = "FastFindControl";
             this.Size = new System.Drawing.Size(1693, 859);
             this.m_OptionsPanel.ResumeLayout(false);
             this.m_OptionsPanel.PerformLayout();
-            this.m_BottomPanel.ResumeLayout(false);
-            this.m_BottomPanel.PerformLayout();
             this.m_TextBoxPanel.ResumeLayout(false);
+            this.m_TextBoxPanel.PerformLayout();
             this.m_TextBoxBorderPanel.ResumeLayout(false);
             this.m_TextBoxBorderPanel.PerformLayout();
-            this.m_TipsPanel.ResumeLayout(false);
-            this.m_TipsPanel.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
-	}
+ 	}
 }

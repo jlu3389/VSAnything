@@ -76,10 +76,10 @@ namespace Company.VSAnything
 		{
 			ComponentResourceManager resources = new ComponentResourceManager(typeof(FastFindForm));
 			base.SuspendLayout();
-			base.AutoScaleDimensions = new SizeF(6f, 13f);
-			base.AutoScaleMode = AutoScaleMode.Font;
-			base.ClientSize = new Size(720, 442);
-			base.FormBorderStyle = FormBorderStyle.SizableToolWindow;
+			//base.AutoScaleDimensions = new SizeF(6f, 13f);
+			//base.AutoScaleMode = AutoScaleMode.Font;
+			//base.ClientSize = new Size(720, 442);
+			//base.FormBorderStyle = FormBorderStyle.SizableToolWindow;
 			base.Icon = (Icon)resources.GetObject("$this.Icon");
 			base.Name = "FastFindForm";
 			base.ShowInTaskbar = false;

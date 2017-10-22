@@ -29,3 +29,4 @@ C:\Users\mario\Desktop\VS_Proj\VSAnything\VSAnything\obj\Debug\VSAnything.pdb
 C:\Users\mario\Desktop\VS_Proj\VSAnything\VSAnything\obj\Debug\VSAnything.pkgdef
 C:\Users\mario\Desktop\VS_Proj\VSAnything\VSAnything\obj\Debug\VSAnything.latest.pkgdef
 C:\Users\mario\Desktop\VS_Proj\VSAnything\VSAnything\obj\Debug\extension.vsixmanifest
+C:\Users\mario\Desktop\VS_Proj\VSAnything\VSAnything\obj\Debug\FastFind.csprojResolveAssemblyReference.cache
