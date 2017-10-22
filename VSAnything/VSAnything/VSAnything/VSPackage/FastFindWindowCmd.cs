@@ -32,7 +32,7 @@ namespace Company.VSAnything
 		private void MenuItemCallback(object sender, EventArgs e)
 		{
 			this.Show();
-			//this.SelectText(true);
+			this.SelectText(true);
 		}
 
 		public void Show()

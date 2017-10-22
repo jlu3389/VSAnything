@@ -59,7 +59,7 @@ namespace Company.VSAnything
 
 		private int m_TotalResultCount;
 
-		private int m_ThreadCount = 1;  // ·½±ãµ÷ÊÔ  Math.Max(1, Environment.ProcessorCount - 1);
+		private int m_ThreadCount = Math.Max(1, Environment.ProcessorCount - 1);
 
 		private AutoResetEvent m_FindthreadFinished = new AutoResetEvent(false);
 

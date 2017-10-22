@@ -221,7 +221,18 @@ namespace Company.VSAnything
 			{
 				if (active_doc_event.m_Line != -1)
 				{
-					this.m_DTE.SetActiveDocumentLine(active_doc_event.m_Line);
+                    this.m_DTE.SetActiveDocumentLine(active_doc_event.m_Line);
+                    /// 通过ListBox打开文档后，把焦点拿回来，否则在非autoHide 情况下，界面不会关掉，很烦
+                    ToolWindowPane window = VSAnythingPackage.Inst.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
+                    if (window != null && window.Frame != null)
+                    {
+                        Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame frame = (Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame)window.Frame;
+                        if(frame != null && frame.IsVisible() == 0) // 0 is visible !!!
+                        {
+                            frame.Show();
+                        }
+
+                    }
 
 				}
 				active_doc_event.m_SetLine = false;
