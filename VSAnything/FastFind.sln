@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FastFind", "VSAnything\FastFind.csproj", "{6AE43151-36D9-4D72-AAFE-3BA68D8F36C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSAnything", "VSAnything\VSAnything.csproj", "{6AE43151-36D9-4D72-AAFE-3BA68D8F36C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
