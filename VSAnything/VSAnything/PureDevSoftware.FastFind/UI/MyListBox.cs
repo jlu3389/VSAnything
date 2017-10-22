@@ -107,7 +107,7 @@ namespace Company.VSAnything
 
 		[method: CompilerGenerated]
 		[CompilerGenerated]
-		public event MyListBox.ItemDoubleClickedHandler ItemDoubleClicked;
+		public event MyListBox.ItemDoubleClickedHandler onItemClicked;
 
 		public int MaxMatchCount
 		{
@@ -413,6 +413,10 @@ namespace Company.VSAnything
 			this.m_ScrollBarPagingTimer.Tick += new EventHandler(this.ScrollBarPagingTimerTick);
 		}
 
+        protected override void OnGotFocus(EventArgs e)
+        {
+            base.OnGotFocus(e);
+        }
 		protected override void Dispose(bool disposing)
 		{
 			this.m_ScrollBarPagingTimer.Stop();
@@ -826,16 +830,14 @@ namespace Company.VSAnything
 			}
 			base.OnMouseMove(e);
 		}
-
-		protected override void OnMouseDoubleClick(MouseEventArgs e)
-		{
-			if ((!this.ScrollBarVisible || e.X < base.ClientSize.Width - 12) && this.ItemDoubleClicked != null)
-			{
-				this.ItemDoubleClicked();
-			}
-			base.OnMouseDoubleClick(e);
-		}
-
+        protected override void OnMouseClick(MouseEventArgs e)
+        {
+            if ((!this.ScrollBarVisible || e.X < base.ClientSize.Width - 12) && this.onItemClicked != null)
+            {
+                this.onItemClicked();
+            }
+            base.OnMouseClick(e);
+        }
 		protected override void OnMouseUp(MouseEventArgs e)
 		{
 			if (this.m_DraggingScrollBar)

@@ -84,7 +84,7 @@ namespace Company.VSAnything
 			base.Name = "FastFindForm";
 			base.ShowInTaskbar = false;
 			base.StartPosition = FormStartPosition.CenterScreen;
-			this.Text = "Fast Find";
+            this.Text = VSAnythingPackage.m_ProductName;
 			base.ResumeLayout(false);
 		}
 	}

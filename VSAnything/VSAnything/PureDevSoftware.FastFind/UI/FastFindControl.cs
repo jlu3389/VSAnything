@@ -334,6 +334,8 @@ namespace Company.VSAnything
             this.UpdateExtToScan();
 			this.UpdateFilesToSearchAndRefresh();
 			arg_429_0.Stop();
+
+
 		}
 
 		private void SolutionFilenameChanged(string solution_filename)
@@ -366,10 +368,10 @@ namespace Company.VSAnything
 			this.m_SolutionFiles.SolutionFileListChanged += new SolutionFiles.SolutionFileListChangedHandler(this.SolutionFileListChanged);
 			this.m_TextBox.MouseDown += new MouseEventHandler(this.TextBoxMouseDown);
 			this.m_TextBox.GotFocus += new EventHandler(this.TextBoxGotFocus);
-			if (!this.m_IsModal)
-			{
-				this.RecursiveHookFocusEvents(this);
-			}
+            if (!this.m_IsModal)
+            {
+                this.RecursiveHookFocusEvents(this);
+            }
 		}
 
 		private void UnhookEvents()
@@ -793,10 +795,7 @@ namespace Company.VSAnything
 				{
 					if (keyData == Keys.Escape)
 					{
-						if (this.m_IsModal)
-						{
-							this.CloseForm();
-						}
+                        this.CloseForm();
 						return true;
 					}
 					if (keyData == Keys.Prior)
@@ -1033,81 +1032,36 @@ namespace Company.VSAnything
 
 		private Pattern[] SplitPattern(string pattern_string)
 		{
-			if (this.m_Settings.GetUseLogicalOperators(this.m_IsModal) && FastFindControl.ContainsLogicalOperator(pattern_string))
-			{
-				List<Pattern> patterns_list = new List<Pattern>();
-				Pattern.Operator op = Pattern.Operator.OR;
-				while (FastFindControl.ContainsLogicalOperator(pattern_string))
-				{
-					int start = 0;
-					int length = 0;
-					int min_index = 2147483647;
-					Pattern.Operator next_op = Pattern.Operator.OR;
-					FastFindControl.LogicalOperator[] logicalOperators = FastFindControl.m_LogicalOperators;
-					for (int i = 0; i < logicalOperators.Length; i++)
-					{
-						FastFindControl.LogicalOperator logic_op = logicalOperators[i];
-						int index = pattern_string.IndexOf(logic_op.m_Name);
-						if (index != -1 && index < min_index)
-						{
-							start = index;
-							length = logic_op.m_Name.Length;
-							next_op = logic_op.m_Operator;
-							min_index = index;
-						}
-					}
-					string sub_pattern = pattern_string.Substring(0, start);
-					pattern_string = pattern_string.Substring(start + length);
-					patterns_list.Add(new Pattern
-					{
-						m_Pattern = sub_pattern,
-						m_Operator = op,
-						m_UseWildcard = (false && sub_pattern.Contains('*'))
-					});
-					op = next_op;
-				}
-				if (pattern_string.Length != 0)
-				{
-					patterns_list.Add(new Pattern
-					{
-						m_Pattern = pattern_string,
-						m_Operator = op,
-						m_UseWildcard = (false && pattern_string.Contains('*'))
-					});
-				}
-				return patterns_list.ToArray();
-			}
-			if (pattern_string.Length != 0)
-			{
-				Pattern[] expr_158 = new Pattern[1];
-				expr_158[0].m_Pattern = pattern_string;
-				expr_158[0].m_Operator = Pattern.Operator.OR;
-				expr_158[0].m_UseWildcard = (false && pattern_string.Contains('*'));
-				return expr_158;
-			}
-			return new Pattern[0];
-		}
+            /// 如果是严格查找，则不分割，否则按空格分成N组
 
-		private void StripFileExtOverride(ref string text, ref List<string> ext_override)
-		{
-			int index = text.IndexOf(" IN .");
-			if (index != -1)
-			{
-                //int ext_index = index + " IN ".Length;   
-				int ext_index = index + " IN .".Length;  // 这里似乎应该加上.
-				string arg_4C_0 = text.Substring(ext_index, text.Length - ext_index);
-				text = text.Substring(0, index);
-				ext_override = new List<string>();
-				string[] array = arg_4C_0.Split(new char[]
-				{
-					','
-				});
-				for (int i = 0; i < array.Length; i++)
-				{
-					string ext = array[i];
-					ext_override.Add(ext.Trim());
-				}
-			}
+            bool bFuzzyMode = true;
+
+            List<Pattern> patterns_list = new List<Pattern>();
+            Pattern.Operator op = Pattern.Operator.AND;
+
+            if (!bFuzzyMode)
+            {
+                patterns_list.Add(new Pattern
+                {
+                    m_Pattern = pattern_string,
+                    m_Operator = op,
+                    m_UseWildcard = false,
+                });
+            }
+            else
+            {
+                string[] list = pattern_string.Split(' ');
+                for (int i = 0; i < list.Length; ++i)
+                {
+                    patterns_list.Add(new Pattern
+                    {
+                        m_Pattern = list[i],
+                        m_Operator = op,
+                        m_UseWildcard = false,
+                    });
+                }
+            }
+            return patterns_list.ToArray();
 		}
 
 		private void StripOperator(ref string text, string op, ref bool match_whole_word)
@@ -1124,32 +1078,13 @@ namespace Company.VSAnything
 			if (this.m_FindTextCheckBox.Checked && !string.IsNullOrEmpty(this.m_SolutionFiles.SolutionRootDir))
 			{
 				string text = this.m_TextBox.Text;
+
 				List<string> ext_override = null;
-				this.StripFileExtOverride(ref text, ref ext_override);
 				bool match_whole_word_override = false;
 				bool case_override = false;
-				this.StripOperator(ref text, " WORD", ref match_whole_word_override);
-				this.StripOperator(ref text, " CASE", ref case_override);
+
 				Pattern[] patterns = this.SplitPattern(text);
-				if (!false)
-				{
-					for (int i = 0; i < patterns.Length; i++)
-					{
-						string sub_pattern = patterns[i].m_Pattern;
-						if (sub_pattern.Contains('*'))
-						{
-							if (!sub_pattern.StartsWith("*"))
-							{
-								sub_pattern = "*" + sub_pattern;
-							}
-							if (!sub_pattern.EndsWith("*"))
-							{
-								sub_pattern += "*";
-							}
-						}
-						patterns[i].m_Pattern = sub_pattern;
-					}
-				}
+
 				FindTextRequest request = new FindTextRequest();
 				request.m_Patterns = patterns;
 				request.m_MatchCase = (this.m_Settings.GetFindTextMatchCase(this.m_IsModal) | case_override);
@@ -1319,7 +1254,7 @@ namespace Company.VSAnything
 				Form parent_form = base.Parent as Form;
 				if (parent_form != null)
 				{
-					string new_title = "FastFind";
+                    string new_title = VSAnythingPackage.m_ProductName;
 					int max_results = VSAnythingPackage.Inst.GetSettingsDialogPage().MaxResults;
 					int expr_36 = Math.Min(this.m_ListBox.SelectableItemCount, max_results);
 					string plus = (expr_36 == max_results) ? "+" : "";
@@ -1582,9 +1517,9 @@ namespace Company.VSAnything
 			if (!this.m_IsModal && this.m_SelectTextOnNextFocus)
 			{
 				this.m_SelectTextOnNextFocus = false;
-				this.m_TextBox.SelectAll();
-				this.m_TextBox.Focus();
+                //this.m_TextBox.SelectAll();
 			}
+            this.m_TextBox.Focus();
 		}
 
 		private void ControlLostFocus(object sender, EventArgs e)
@@ -1614,9 +1549,9 @@ namespace Company.VSAnything
             this.button2 = new System.Windows.Forms.Button();
             this.m_FilesCheckBox = new System.Windows.Forms.CheckBox();
             this.m_TextBoxPanel = new System.Windows.Forms.Panel();
-            this.m_OptionsButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.m_OptionsButton = new System.Windows.Forms.Button();
             this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.m_ListBox = new Company.VSAnything.MyListBox();
             this.m_OptionsPanel.SuspendLayout();
@@ -1630,10 +1565,10 @@ namespace Company.VSAnything
             this.m_FindTextCheckBox.AutoSize = true;
             this.m_FindTextCheckBox.Checked = true;
             this.m_FindTextCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_FindTextCheckBox.Location = new System.Drawing.Point(1156, 40);
+            this.m_FindTextCheckBox.Location = new System.Drawing.Point(1228, 40);
             this.m_FindTextCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.m_FindTextCheckBox.Name = "m_FindTextCheckBox";
-            this.m_FindTextCheckBox.Size = new System.Drawing.Size(150, 28);
+            this.m_FindTextCheckBox.Size = new System.Drawing.Size(78, 16);
             this.m_FindTextCheckBox.TabIndex = 6;
             this.m_FindTextCheckBox.Text = "Find Text";
             this.m_FindTextCheckBox.UseVisualStyleBackColor = true;
@@ -1658,7 +1593,7 @@ namespace Company.VSAnything
             this.m_FullPathTextBox.AutoSize = true;
             this.m_FullPathTextBox.Location = new System.Drawing.Point(3, 22);
             this.m_FullPathTextBox.Name = "m_FullPathTextBox";
-            this.m_FullPathTextBox.Size = new System.Drawing.Size(118, 24);
+            this.m_FullPathTextBox.Size = new System.Drawing.Size(59, 12);
             this.m_FullPathTextBox.TabIndex = 10;
             this.m_FullPathTextBox.Text = "full path";
             // 
@@ -1681,10 +1616,10 @@ namespace Company.VSAnything
             this.m_WholeWordCheckbox.AutoSize = true;
             this.m_WholeWordCheckbox.Checked = true;
             this.m_WholeWordCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_WholeWordCheckbox.Location = new System.Drawing.Point(1156, 8);
+            this.m_WholeWordCheckbox.Location = new System.Drawing.Point(1234, 8);
             this.m_WholeWordCheckbox.Margin = new System.Windows.Forms.Padding(2);
             this.m_WholeWordCheckbox.Name = "m_WholeWordCheckbox";
-            this.m_WholeWordCheckbox.Size = new System.Drawing.Size(162, 28);
+            this.m_WholeWordCheckbox.Size = new System.Drawing.Size(84, 16);
             this.m_WholeWordCheckbox.TabIndex = 13;
             this.m_WholeWordCheckbox.Text = "Whole Word";
             this.m_WholeWordCheckbox.UseVisualStyleBackColor = false;
@@ -1709,10 +1644,10 @@ namespace Company.VSAnything
             this.m_FilesCheckBox.AutoSize = true;
             this.m_FilesCheckBox.Checked = true;
             this.m_FilesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.m_FilesCheckBox.Location = new System.Drawing.Point(1156, 72);
+            this.m_FilesCheckBox.Location = new System.Drawing.Point(1234, 72);
             this.m_FilesCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.m_FilesCheckBox.Name = "m_FilesCheckBox";
-            this.m_FilesCheckBox.Size = new System.Drawing.Size(162, 28);
+            this.m_FilesCheckBox.Size = new System.Drawing.Size(84, 16);
             this.m_FilesCheckBox.TabIndex = 4;
             this.m_FilesCheckBox.Text = "Find Files";
             this.m_FilesCheckBox.UseVisualStyleBackColor = true;
@@ -1724,38 +1659,10 @@ namespace Company.VSAnything
             this.m_TextBoxPanel.Controls.Add(this.m_TextBoxBorderPanel);
             this.m_TextBoxPanel.Controls.Add(this.m_OptionsButton);
             this.m_TextBoxPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 712);
+            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 728);
             this.m_TextBoxPanel.Name = "m_TextBoxPanel";
-            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 39);
+            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 23);
             this.m_TextBoxPanel.TabIndex = 0;
-            // 
-            // m_OptionsButton
-            // 
-            this.m_OptionsButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.m_OptionsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.m_OptionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_OptionsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.m_OptionsButton.Location = new System.Drawing.Point(1645, 0);
-            this.m_OptionsButton.Name = "m_OptionsButton";
-            this.m_OptionsButton.Size = new System.Drawing.Size(48, 39);
-            this.m_OptionsButton.TabIndex = 1;
-            this.m_OptionsButton.UseVisualStyleBackColor = false;
-            this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
-            // 
-            // button1
-            // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.button1.Location = new System.Drawing.Point(1594, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(51, 39);
-            this.button1.TabIndex = 2;
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.OldSearchesDropDownButtonClicked);
-            this.button1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OldSearchesDropDownButtonMouseDown);
             // 
             // m_TextBoxBorderPanel
             // 
@@ -1766,8 +1673,36 @@ namespace Company.VSAnything
             this.m_TextBoxBorderPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.m_TextBoxBorderPanel.Location = new System.Drawing.Point(0, 0);
             this.m_TextBoxBorderPanel.Name = "m_TextBoxBorderPanel";
-            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1645, 39);
+            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1645, 23);
             this.m_TextBoxBorderPanel.TabIndex = 0;
+            // 
+            // button1
+            // 
+            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.button1.Location = new System.Drawing.Point(1594, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(51, 23);
+            this.button1.TabIndex = 2;
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.OldSearchesDropDownButtonClicked);
+            this.button1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OldSearchesDropDownButtonMouseDown);
+            // 
+            // m_OptionsButton
+            // 
+            this.m_OptionsButton.Dock = System.Windows.Forms.DockStyle.Right;
+            this.m_OptionsButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.m_OptionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_OptionsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.m_OptionsButton.Location = new System.Drawing.Point(1645, 0);
+            this.m_OptionsButton.Name = "m_OptionsButton";
+            this.m_OptionsButton.Size = new System.Drawing.Size(48, 23);
+            this.m_OptionsButton.TabIndex = 1;
+            this.m_OptionsButton.UseVisualStyleBackColor = false;
+            this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
             // 
             // m_TextBox
             // 
@@ -1777,9 +1712,8 @@ namespace Company.VSAnything
             this.m_TextBox.ForeColor = System.Drawing.Color.White;
             this.m_TextBox.Location = new System.Drawing.Point(0, 0);
             this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1594, 39);
+            this.m_TextBox.Size = new System.Drawing.Size(1594, 23);
             this.m_TextBox.TabIndex = 0;
-            this.m_TextBox.EscapeKeyPressed += new Company.VSAnything.EscapeKeyPressedHandler(this.TextBoxEscapeKeyPressed);
             this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
             this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
@@ -1808,7 +1742,7 @@ namespace Company.VSAnything
             this.m_ListBox.TabIndex = 10;
             this.m_ListBox.TabStop = false;
             this.m_ListBox.SelectedIndexchanged += new Company.VSAnything.MyListBox.SelectedIndexchangedHandler(this.ListBoxSelectedIndexChanged);
-            this.m_ListBox.ItemDoubleClicked += new Company.VSAnything.MyListBox.ItemDoubleClickedHandler(this.ListBoxItemDoubleClicked);
+            this.m_ListBox.onItemClicked += new Company.VSAnything.MyListBox.ItemDoubleClickedHandler(this.ListBoxItemDoubleClicked);
             // 
             // FastFindControl
             // 
@@ -1828,5 +1762,6 @@ namespace Company.VSAnything
             this.PerformLayout();
 
 		}
+
  	}
 }

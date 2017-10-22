@@ -265,7 +265,7 @@ namespace Company.VSAnything
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(184, 48);
             this.label14.TabIndex = 10;
-            this.label14.Text = "FastFind";
+            this.label14.Text = VSAnythingPackage.m_ProductName;
             // 
             // pictureBox1
             // 

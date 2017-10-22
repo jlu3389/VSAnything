@@ -51,27 +51,14 @@ namespace Company.VSAnything
 
 		private DTE m_DTE;
 
-		private static string m_Manufacturer = "PureDev Software";
 
-		private static string m_ProductName = "FastFind";
+		public static string m_ProductName = "VSAnything";
 
-		private static string m_WebsiteAddr = "http://www.puredevsoftware.com/registration/";
 
-		private const string m_MachineIdDatabase = "fastfind_machine_id";
 
-		private const string m_RegistrationDatabase = "fastfind_registration";
-
-		private const string m_PurchaseWebsite = "http://www.puredevsoftware.com/fastfind/Purchase.htm";
 
 		private const int m_ScanDelay = 1000;
 
-		private static string[] m_RegTypes = new string[]
-		{
-			"Floating License x 1",
-			"Floating License x 2",
-			"Floating License x 4",
-			"Floating License x 8"
-		};
 
 		private FastFindCmd m_FastFindCmd = new FastFindCmd();
 
@@ -196,7 +183,7 @@ namespace Company.VSAnything
 				if (!this.m_Settings.ShownWelcomeForm)
 				{
 					new System.Threading.Thread(new ThreadStart(this.WelcomeThread)).Start();
-				}
+				} 
 			}
 			catch (Exception arg_368_0)
 			{
@@ -224,9 +211,9 @@ namespace Company.VSAnything
 
 		private void WindowActivated(Window GotFocus, Window LostFocus)
 		{
-			if (GotFocus.Caption == "Fast Find")
+			if (GotFocus.Caption == VSAnythingPackage.m_ProductName)
 			{
-				this.m_FastFindWindowCmd.SelectText(false);
+                //this.m_FastFindWindowCmd.SelectText(false);
 			}
 			string doc_name = null;
 			if (GotFocus != null && GotFocus.Document != null)

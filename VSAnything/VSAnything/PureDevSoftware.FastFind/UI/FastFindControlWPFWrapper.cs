@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Markup;
+using System.Windows.Input;
 
 namespace Company.VSAnything
 {
@@ -32,9 +33,23 @@ namespace Company.VSAnything
 			this.m_TabStopPanel.WpfHost = this.m_WindowsFormsHost;
 			bool is_modal = false;
 			this.m_FastFindControl = new FastFindControl(dte, solution_files, file_finder, text_finder, get_open_files_thread, settings, "", -1, is_modal);
+            this.m_FastFindControl.ControlWantsToClose += onEscToCloseWindow;
 			this.m_FastFindControl.Dock = DockStyle.Fill;
 			this.m_TabStopPanel.Controls.Add(this.m_FastFindControl);
 		}
+
+        void onEscToCloseWindow()
+        {
+            /// 任何地方按住esc关闭窗口
+            /// 目前在历史记录框不起效 mariotodo
+            ToolWindowPane window = VSAnythingPackage.Inst.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
+            if (window != null && window.Frame != null)
+            {
+                ((Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame)window.Frame).Hide();
+         
+            }
+
+        }
 
 		public void Dispose()
 		{
