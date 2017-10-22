@@ -331,6 +331,7 @@ namespace Company.VSAnything
 			this.m_TextBox.Focus();
 			this.HookEvents();
 			this.SetSolutionFilename(this.m_SolutionFiles.SolutionFilename);
+            this.UpdateExtToScan();
 			this.UpdateFilesToSearchAndRefresh();
 			arg_429_0.Stop();
 		}
@@ -1488,7 +1489,18 @@ namespace Company.VSAnything
 			this.m_DTE.ActivateActiveDocument();
 		}
 
-
+        private void UpdateExtToScan()
+        {
+            ICollection<string> old_ext_to_scan = VSAnythingPackage.Inst.GetSettingsDialogPage().ExtList;
+            Set<string> ext_to_scan = new Set<string>(old_ext_to_scan);
+            Set<string> ext_to_scan_lower = Utils.ToLower(ext_to_scan);
+            if (!ext_to_scan_lower.SequenceEqual(this.m_ExtToScan))
+            {
+                this.m_ExtToScan = ext_to_scan_lower;
+                this.UpdateFilesToSearchAndRefresh();
+                this.StartGettingOpenFiles();
+            }
+        }
 		private void TextBoxKeyPress(object sender, KeyPressEventArgs e)
 		{
 			char keyChar = e.KeyChar;
