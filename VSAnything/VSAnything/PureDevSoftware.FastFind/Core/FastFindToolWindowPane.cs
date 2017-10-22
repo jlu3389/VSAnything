@@ -84,12 +84,11 @@ namespace Company.VSAnything
 		public FastFindToolWindowPane() : base(null)
 		{
             //mariotodo
-            base.Caption = VSAnythingPackage.m_ProductName;
+            base.Caption = "Fast Find";
             base.BitmapResourceID = 301;
             base.BitmapResourceID = 0;
             this.m_Control = new FastFindControlWPFWrapper(FastFindToolWindowPane.m_DTE, FastFindToolWindowPane.m_SolutionFiles, FastFindToolWindowPane.m_FileFinder, FastFindToolWindowPane.m_TextFinder, FastFindToolWindowPane.m_GetOpenFilesThread, FastFindToolWindowPane.m_Settings, this);
             base.Content = this.m_Control;
-           
 		}
 
 		public override void OnToolWindowCreated()

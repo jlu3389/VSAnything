@@ -278,7 +278,7 @@ namespace Company.VSAnything
 					if (File.Exists(path))
 					{
 						XmlReadStream stream = new XmlReadStream();
-						if (stream.Load(path) && stream.StartElement(VSAnythingPackage.m_ProductName))
+						if (stream.Load(path) && stream.StartElement("FastFind"))
 						{
 							this.Read(stream);
 							stream.EndElement();
@@ -316,7 +316,7 @@ namespace Company.VSAnything
 						Directory.CreateDirectory(dir);
 					}
 					XmlWriteStream stream = new XmlWriteStream();
-					stream.StartElement(VSAnythingPackage.m_ProductName);
+					stream.StartElement("FastFind");
 					this.Write(stream);
 					stream.EndElement();
 					stream.Save(path);
