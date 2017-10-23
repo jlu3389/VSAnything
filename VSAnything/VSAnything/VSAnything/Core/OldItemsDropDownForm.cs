@@ -104,45 +104,47 @@ namespace Company.VSAnything
 
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			Keys keyCode = e.KeyCode;
-			if (keyCode <= Keys.Return)
-			{
-				if (keyCode != Keys.Back)
-				{
-					if (keyCode != Keys.Return)
-					{
-						goto IL_7E;
-					}
-					base.Close();
-					goto IL_7E;
-				}
-			}
-			else if (keyCode != Keys.Up)
-			{
-				if (keyCode == Keys.Down)
-				{
-					this.SetSelectedIndex(Math.Min(this.m_SelectedIndex + 1, this.m_Items.Count - 1));
-					goto IL_7E;
-				}
-				if (keyCode != Keys.Delete)
-				{
-					goto IL_7E;
-				}
-			}
-			else
-			{
-				this.SetSelectedIndex(this.m_SelectedIndex - 1);
-				if (this.m_SelectedIndex == -1)
-				{
-					base.Close();
-					goto IL_7E;
-				}
-				goto IL_7E;
-			}
-			this.SetSelectedIndex(-1);
-			base.Close();
-			IL_7E:
-			base.OnKeyDown(e);
+            /// mariotodo ÀúÊ·¼ÇÂ¼¿ò
+            base.OnKeyDown(e);
+            //Keys keyCode = e.KeyCode;
+            //if (keyCode <= Keys.Return)
+            //{
+            //    if (keyCode != Keys.Back)
+            //    {
+            //        if (keyCode != Keys.Return)
+            //        {
+            //            goto IL_7E;
+            //        }
+            //        base.Close();
+            //        goto IL_7E;
+            //    }
+            //}
+            //else if (keyCode != Keys.Up)
+            //{
+            //    if (keyCode == Keys.Down)
+            //    {
+            //        this.SetSelectedIndex(Math.Min(this.m_SelectedIndex + 1, this.m_Items.Count - 1));
+            //        goto IL_7E;
+            //    }
+            //    if (keyCode != Keys.Delete)
+            //    {
+            //        goto IL_7E;
+            //    }
+            //}
+            //else
+            //{
+            //    this.SetSelectedIndex(this.m_SelectedIndex - 1);
+            //    if (this.m_SelectedIndex == -1)
+            //    {
+            //        base.Close();
+            //        goto IL_7E;
+            //    }
+            //    goto IL_7E;
+            //}
+            //this.SetSelectedIndex(-1);
+            //base.Close();
+            //IL_7E:
+            //base.OnKeyDown(e);
 		}
 
 		private void SetSelectedIndex(int index)
