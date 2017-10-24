@@ -810,101 +810,40 @@ namespace Company.VSAnything
 
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			if (keyData <= Keys.Next)
-			{
-				if (keyData <= Keys.Return)
-				{
-					if (keyData != Keys.Tab)
-					{
-						if (keyData == Keys.Return)
-						{
-							this.Submit();
-							return true;
-						}
-					}
-					else if (this.AutoCompletePath())
-					{
-						return true;
-					}
-				}
-				else
-				{
-					if (keyData == Keys.Escape)
-					{
-                        this.CloseForm();
-						return true;
-					}
-					if (keyData == Keys.Prior)
-					{
-						this.ScrollSelectionTo(this.m_ListBox.SelectedIndex - this.m_ListBox.Height / this.m_ListBox.ItemHeight, false);
-						this.UpdateInitialSelectedItem();
-						return true;
-					}
-					if (keyData == Keys.Next)
-					{
-						this.ScrollSelectionTo(this.m_ListBox.SelectedIndex + this.m_ListBox.Height / this.m_ListBox.ItemHeight, false);
-						this.UpdateInitialSelectedItem();
-						return true;
-					}
-				}
-			}
-			else if (keyData <= (Keys.LButton | Keys.Space | Keys.Shift))
-			{
-				if (keyData == Keys.Up)
-				{
-					this.ScrollSelectionTo(this.m_ListBox.SelectedIndex - 1, false);
-					this.UpdateInitialSelectedItem();
-					return true;
-				}
-				if (keyData == Keys.Down)
-				{
-					if (this.m_TextBox.Text.Length == 0 && this.m_Settings.OldSearches.Count != 0)
-					{
-						this.ShowOldSearchComboBox();
-					}
-					else
-					{
-						this.ScrollSelectionTo(this.m_ListBox.SelectedIndex + 1, false);
-					}
-					this.UpdateInitialSelectedItem();
-					return true;
-				}
-				if (keyData == (Keys.LButton | Keys.Space | Keys.Shift))
-				{
-					this.ScrollSelectionTo(this.m_ListBox.SelectedIndexEnd - this.m_ListBox.Height / this.m_ListBox.ItemHeight, true);
-					this.UpdateInitialSelectedItem();
-					return true;
-				}
-			}
-			else
-			{
-				if (keyData == (Keys.RButton | Keys.Space | Keys.Shift))
-				{
-					this.ScrollSelectionTo(this.m_ListBox.SelectedIndexEnd + this.m_ListBox.Height / this.m_ListBox.ItemHeight, true);
-					this.UpdateInitialSelectedItem();
-					return true;
-				}
-				if (keyData == (Keys.RButton | Keys.MButton | Keys.Space | Keys.Shift))
-				{
-					this.ScrollSelectionTo(this.m_ListBox.SelectedIndexEnd - 1, true);
-					this.UpdateInitialSelectedItem();
-					return true;
-				}
-				if (keyData == (Keys.Back | Keys.Space | Keys.Shift))
-				{
-					if (this.m_TextBox.Text.Length == 0 && this.m_Settings.OldSearches.Count != 0)
-					{
-						this.ShowOldSearchComboBox();
-					}
-					else
-					{
-						this.ScrollSelectionTo(this.m_ListBox.SelectedIndexEnd + 1, true);
-					}
-					this.UpdateInitialSelectedItem();
-					return true;
-				}
-			}
+            /// 只要是alt + key 快捷键，都不放过，避免干扰。
+            /// 另外，在控件隐藏式无法处理快捷键，所以需要手动处理
+            /******************************************************
+                Return                              打开选中文档
+                ESC                                 关闭
+                方向键上|Alt + K                    上移列表
+                方向键下|Alt + J                    下移列表
+                TAB                                 切换 AND | OR 模式
+                Alt + A                             全选输入框
+                Alt + C                             切换工程/当前文档结果
+            *******************************************************/
 
+			if (keyData == Keys.Return)
+			{
+				this.Submit();
+				return true;
+            }
+			if (keyData == Keys.Escape)
+			{
+                this.CloseForm();
+				return true;
+			}
+			if (keyData == Keys.Up || (keyData == (Keys.Control | Keys.K)))
+			{
+                this.ScrollSelectionTo(this.m_ListBox.SelectedIndex - 1, false);
+                this.UpdateInitialSelectedItem();
+                return true;
+			}
+            if (keyData == Keys.Down || (keyData == (Keys.Control | Keys.J)))
+			{
+                this.ScrollSelectionTo(this.m_ListBox.SelectedIndex + 1, false);
+				this.UpdateInitialSelectedItem();
+				return true;
+			}
             if (keyData == Keys.Tab)
             {
                 /// Tab 用于切换 And / Or
@@ -912,31 +851,7 @@ namespace Company.VSAnything
                 m_TextBox.Focus();
                 return true;
             }
-            if (keyData == (Keys.Control | Keys.J))
-            {
-                // vim : ListBox down
-                if (this.m_TextBox.Text.Length == 0 && this.m_Settings.OldSearches.Count != 0)
-                {
-                    //this.ShowOldSearchComboBox();
-                }
-                else
-                {
-                    this.ScrollSelectionTo(this.m_ListBox.SelectedIndex + 1, false);
-                }
-                this.UpdateInitialSelectedItem();
-                return true;
-            }
-            if (keyData == (Keys.Control | Keys.K))
-            {
-                // vim : ListBox Up
-                this.ScrollSelectionTo(this.m_ListBox.SelectedIndex - 1, false);
-                this.UpdateInitialSelectedItem();
-                return true;
-            }
 
-            /// 如果是 Alt + 快捷键，在非dock 模式下，会跟VS冲突，导致控件无法收到。
-            /// 所以先判断子控件是否处理，不处理才放过
-            /// 
             for (int i = 0; i < Keys.Z - Keys.A + 1; ++i)
             {
                 if (keyData == (Keys.Alt | (Keys.A + i)))
@@ -949,6 +864,20 @@ namespace Company.VSAnything
                     {
                         return true;
                     }
+
+                    if ((Keys.A + i) == Keys.A)
+                    {
+                        this.m_TextBox.SelectAll();
+                        return true;
+                    }
+
+                    if ((Keys.A + i == Keys.C))
+                    {
+                        switchShowCurrentCheckBox();
+                        return true;
+                    }
+
+                    return true;
                 }
             }
             return base.ProcessCmdKey(ref msg, keyData);
@@ -1690,9 +1619,9 @@ namespace Company.VSAnything
             this.m_TextBoxPanel.Controls.Add(this.m_TextBoxBorderPanel);
             this.m_TextBoxPanel.Controls.Add(this.m_OptionsButton);
             this.m_TextBoxPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 794);
+            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 790);
             this.m_TextBoxPanel.Name = "m_TextBoxPanel";
-            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 23);
+            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 27);
             this.m_TextBoxPanel.TabIndex = 0;
             // 
             // m_TextBoxBorderPanel
@@ -1705,18 +1634,17 @@ namespace Company.VSAnything
             this.m_TextBoxBorderPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.m_TextBoxBorderPanel.Location = new System.Drawing.Point(0, 0);
             this.m_TextBoxBorderPanel.Name = "m_TextBoxBorderPanel";
-            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1630, 21);
+            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1630, 25);
             this.m_TextBoxBorderPanel.TabIndex = 0;
             // 
             // label_search_mode
             // 
-            this.label_search_mode.AutoSize = true;
             this.label_search_mode.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.label_search_mode.Font = new System.Drawing.Font("Microsoft YaHei", 9F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_search_mode.Font = new System.Drawing.Font("NSimSun", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label_search_mode.ForeColor = System.Drawing.Color.DarkOrchid;
             this.label_search_mode.Location = new System.Drawing.Point(0, 0);
             this.label_search_mode.Name = "label_search_mode";
-            this.label_search_mode.Size = new System.Drawing.Size(150, 17);
+            this.label_search_mode.Size = new System.Drawing.Size(208, 19);
             this.label_search_mode.TabIndex = 17;
             this.label_search_mode.Text = "Search Mode <AND>：";
             this.label_search_mode.Click += new System.EventHandler(this.label_search_mode_Click);
@@ -1725,11 +1653,11 @@ namespace Company.VSAnything
             // 
             this.m_TextBox.BackColor = System.Drawing.Color.Black;
             this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.m_TextBox.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.m_TextBox.ForeColor = System.Drawing.Color.White;
-            this.m_TextBox.Location = new System.Drawing.Point(149, 2);
+            this.m_TextBox.Location = new System.Drawing.Point(214, 3);
             this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1592, 16);
+            this.m_TextBox.Size = new System.Drawing.Size(1592, 19);
             this.m_TextBox.TabIndex = 0;
             this.m_TextBox.TabStop = false;
             this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
@@ -1744,7 +1672,7 @@ namespace Company.VSAnything
             this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.button1.Location = new System.Drawing.Point(1579, 0);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(51, 21);
+            this.button1.Size = new System.Drawing.Size(51, 25);
             this.button1.TabIndex = 2;
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.OldSearchesDropDownButtonClicked);
@@ -1759,7 +1687,7 @@ namespace Company.VSAnything
             this.m_OptionsButton.ImageKey = "(none)";
             this.m_OptionsButton.Location = new System.Drawing.Point(1630, 0);
             this.m_OptionsButton.Name = "m_OptionsButton";
-            this.m_OptionsButton.Size = new System.Drawing.Size(61, 21);
+            this.m_OptionsButton.Size = new System.Drawing.Size(61, 25);
             this.m_OptionsButton.TabIndex = 1;
             this.m_OptionsButton.Text = "Setting";
             this.m_OptionsButton.UseVisualStyleBackColor = false;
@@ -1770,7 +1698,7 @@ namespace Company.VSAnything
             this.m_ListBox.BackColor = System.Drawing.Color.Black;
             this.m_ListBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_ListBox.FindingTextPercent = 0;
-            this.m_ListBox.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_ListBox.Font = new System.Drawing.Font("Consolas", 7.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_ListBox.ForeColor = System.Drawing.Color.White;
             this.m_ListBox.Location = new System.Drawing.Point(0, 0);
             this.m_ListBox.MaxMatchCount = 0;
@@ -1791,6 +1719,7 @@ namespace Company.VSAnything
             this.m_ListBox.TabStop = false;
             this.m_ListBox.SelectedIndexchanged += new Company.VSAnything.MyListBox.SelectedIndexchangedHandler(this.ListBoxSelectedIndexChanged);
             this.m_ListBox.onItemClicked += new Company.VSAnything.MyListBox.ItemDoubleClickedHandler(this.ListBoxItemDoubleClicked);
+            this.m_ListBox.Load += new System.EventHandler(this.m_ListBox_Load);
             // 
             // FastFindControl
             // 
@@ -1821,7 +1750,11 @@ namespace Company.VSAnything
             this.RefreshFindResults(true);
             
         }
-       
+
+        private void switchShowCurrentCheckBox()
+        {
+            this.m_CheckBoxShowCurrFile.Checked = !this.m_CheckBoxShowCurrFile.Checked;
+        }
 
         private void radioButton_CheckedChanged(object sender, EventArgs e)
         {
@@ -1835,6 +1768,26 @@ namespace Company.VSAnything
         private void label_search_mode_Click(object sender, EventArgs e)
         {
             switchAndOrMode();
+        }
+
+        private void m_ListBox_Load(object sender, EventArgs e)
+        {
+            /// 修改Listbox字体跟TextEditor字体一致
+            /// 
+            try
+            {
+                EnvDTE.Properties props = this.m_DTE.EnvDTE.get_Properties("FontsAndColors", "TextEditor");
+                string fontName = props.Item("FontFamily").Value.ToString();
+                string strfontSize = props.Item("FontSize").Value.ToString();
+                float fFontSize = float.Parse(strfontSize);
+
+                this.m_ListBox.Font = new System.Drawing.Font(fontName, fFontSize, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            }
+            catch (Exception ecp)
+            {
+
+            }
+            
         }
  	}
 }
