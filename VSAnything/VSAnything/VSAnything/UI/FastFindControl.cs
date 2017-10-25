@@ -483,9 +483,9 @@ namespace Company.VSAnything
 		{
             this.m_TextBox.Focus();
 
-            //this.m_TextBox.SelectAll();
-            this.m_TextBox.SelectionStart = this.m_TextBox.Text.Length;
-            this.m_TextBox.SelectionLength = 0;
+            this.m_TextBox.SelectAll();
+            //this.m_TextBox.SelectionStart = this.m_TextBox.Text.Length;
+            //this.m_TextBox.SelectionLength = 0;
 
             if (!this.m_TextBox.Focused)
             {
@@ -497,9 +497,9 @@ namespace Company.VSAnything
 		{
             this.m_TextBox.Focus();
 
-            //this.m_TextBox.SelectAll();
-            this.m_TextBox.SelectionStart = this.m_TextBox.Text.Length;
-            this.m_TextBox.SelectionLength = 0;
+            this.m_TextBox.SelectAll();
+            //this.m_TextBox.SelectionStart = this.m_TextBox.Text.Length;
+            //this.m_TextBox.SelectionLength = 0;
 
             if (this.m_TextBox.Focused)
             {
