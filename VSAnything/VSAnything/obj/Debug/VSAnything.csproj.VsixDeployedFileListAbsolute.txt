@@ -1,6 +1,0 @@
-C:\Users\mario\AppData\Local\Microsoft\VisualStudio\11.0Exp\Extensions\Company\VSAnything\1.0\\VSAnything.dll
-C:\Users\mario\AppData\Local\Microsoft\VisualStudio\11.0Exp\Extensions\Company\VSAnything\1.0\\VSAnything.pkgdef
-C:\Users\mario\AppData\Local\Microsoft\VisualStudio\11.0Exp\Extensions\Company\VSAnything\1.0\\extension.vsixmanifest
-C:\Users\mario\AppData\Local\Microsoft\VisualStudio\11.0Exp\Extensions\Company\VSAnything\1.0\\VSAnything.pdb
-C:\Users\mario\AppData\Local\Microsoft\VisualStudio\11.0Exp\Extensions\Company\VSAnything\1.0\\Registration.dll
-C:\Users\mario\AppData\Local\Microsoft\VisualStudio\11.0Exp\Extensions\Company\VSAnything\1.0\\SCLCoreCLR.dll
