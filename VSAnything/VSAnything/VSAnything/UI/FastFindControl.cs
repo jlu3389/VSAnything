@@ -458,9 +458,17 @@ namespace Company.VSAnything
 		private void GetOpenFilesFinished_MainThread(object arg)
 		{
 			FastFindControl.GetOpenFilesResults expr_06 = (FastFindControl.GetOpenFilesResults)arg;
-			FastFindControl.m_OpenFiles = expr_06.m_OpenFiles;
-			FastFindControl.m_UnsavedDocuments = expr_06.m_UnsavedDocuments;
-			this.UpdateFilesToSearchAndRefresh();
+            if (!FastFindControl.m_OpenFiles.SequenceEqual(expr_06.m_OpenFiles) || !FastFindControl.m_UnsavedDocuments.SequenceEqual(expr_06.m_UnsavedDocuments))
+            {
+                FastFindControl.m_OpenFiles = expr_06.m_OpenFiles;
+                FastFindControl.m_UnsavedDocuments = expr_06.m_UnsavedDocuments;
+                this.UpdateFilesToSearchAndRefresh();
+            }
+            else
+            {
+                Log.WriteLine("open file not change");
+            }
+
 		}
 
 		private void TextBoxMouseDown(object sender, MouseEventArgs e)
