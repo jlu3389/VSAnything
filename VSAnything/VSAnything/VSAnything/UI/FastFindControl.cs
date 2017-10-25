@@ -1080,17 +1080,20 @@ namespace Company.VSAnything
 
             if (!bFuzzyMode)
             {
-                patterns_list.Add(new Pattern
+                if (pattern_string.Length > 0)
                 {
-                    m_Pattern = pattern_string,
-                    m_Operator = op,
-                    m_UseWildcard = false,
-                });
+                    patterns_list.Add(new Pattern
+                    {
+                        m_Pattern = pattern_string,
+                        m_Operator = op,
+                        m_UseWildcard = false,
+                    });
+                }
             }
             else
             {
-                string[] list = pattern_string.Split(' ');
-                for (int i = 0; i < list.Length; ++i)
+                string[] list = pattern_string.Split(' ');  //<<  split empty string will returns "",which is unexpected!
+                for (int i = 0; i < list.Length && list[i].Length > 0; ++i)
                 {
                     patterns_list.Add(new Pattern
                     {
