@@ -673,5 +673,9 @@ namespace Company.VSAnything
 		{
 			return (AppearanceDialogPage)base.GetDialogPage(typeof(AppearanceDialogPage));
 		}
+        public object GetService(Type serviceType)
+        {
+            return base.GetService(serviceType);
+        }
 	}
 }
