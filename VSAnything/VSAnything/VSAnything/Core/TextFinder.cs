@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Text;
 
 namespace Company.VSAnything
 {
@@ -448,7 +449,11 @@ namespace Company.VSAnything
 									}
 									try
 									{
-										StreamReader reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                                        // 《.NET(C#)：关于正确读取中文编码文件》 https://www.mgenware.com/blog/?p=175
+                                        /// 默认以GB2312去读取，但如果遇到带BOM 的Unicode，会自动检测Bom头，使用Unicode编码去读取
+                                        /// 另一个方式是使用 System.Text.Encoding.Default ，不清楚是否靠谱
+                                        var gb2312 = Encoding.GetEncoding("GB2312");
+                                        StreamReader reader = new StreamReader(new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), gb2312, true);
 										for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
 										{
 											line = line.TrimEnd(Array.Empty<char>());
