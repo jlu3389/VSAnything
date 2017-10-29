@@ -457,6 +457,7 @@ namespace Company.VSAnything
 										for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
 										{
 											line = line.TrimEnd(Array.Empty<char>());
+                                            line = line.TrimStart(Array.Empty<char>());
 											cached_file.m_Lines.Add(Utils.Intern(line));
 											cached_file.m_LinesLowercase.Add(Utils.Intern(line.ToLower()));
 										}

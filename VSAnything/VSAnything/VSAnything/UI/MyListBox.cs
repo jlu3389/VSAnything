@@ -539,8 +539,11 @@ namespace Company.VSAnything
 						FindTextResult find_text_result = (FindTextResult)item;
 						if (find_text_result != null)
 						{
-							string filename = (VSAnythingPackage.Inst.GetSettingsDialogPage().FindTextPathMode == PathMode.Filename) ? find_text_result.m_Filename : find_text_result.m_Path;
+                            string filename = find_text_result.m_Filename;
 							int display_line = find_text_result.m_LineIndex + 1;
+                            
+                            const int fileNameDisplayLength = 40;
+
 							filename = string.Concat(new object[]
 							{
 								filename,
@@ -548,6 +551,12 @@ namespace Company.VSAnything
 								display_line,
 								"): "
 							});
+
+                            if (filename.Length < fileNameDisplayLength)
+                            {
+                                filename += new string(' ',fileNameDisplayLength - filename.Length);
+                            }
+
 							int start = find_text_result.m_StartIndex;
 							int end = find_text_result.m_EndIndex;
 							string line = find_text_result.m_Line;
