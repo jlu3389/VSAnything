@@ -185,7 +185,7 @@ namespace Company.VSAnything
         private bool m_bFindFiles = false;  // 关闭文件查找功能
         private bool m_bFindText = true;    // 默认只开启文本搜索
         private bool m_bWholeWord = false;  //
-
+        private bool m_bConsiderFileNameWhenMatchLineFail = false;   //
         private Pattern.Operator m_currOp = Pattern.Operator.AND;    // 默认使用And
 
         private string m_strOpAndText = "Search Mode <AND>：";
@@ -212,6 +212,7 @@ namespace Company.VSAnything
         private CheckBox m_CheckBoxShowCurrFile;
         private Label label_search_mode;
         private FastFindTextBox m_TextBox;
+        private CheckBox considerFileName_checkBox1;
         private MyListBox m_ListBox;
 
 		[method: CompilerGenerated]
@@ -326,6 +327,9 @@ namespace Company.VSAnything
 			this.m_ProgressBar.Size = new Size(base.ClientSize.Width, 2);
 			this.m_ProgressBar.Anchor = (AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right);
 			this.m_ProgressBar.Visible = false;
+
+            this.m_bConsiderFileNameWhenMatchLineFail = this.considerFileName_checkBox1.Checked;
+
 			if (!string.IsNullOrEmpty(initial_text))
 			{
 				this.m_IgnoreTextBoxTextChanges = true;
@@ -828,6 +832,7 @@ namespace Company.VSAnything
                 TAB                                 切换 AND | OR 模式
                 Alt + A                             全选输入框
                 Alt + C                             切换工程/当前文档结果
+                Alt + F                             在匹配行失败时，是否考虑匹配文件名
             *******************************************************/
 
 			if (keyData == Keys.Return)
@@ -884,7 +889,11 @@ namespace Company.VSAnything
                         switchShowCurrentCheckBox();
                         return true;
                     }
-
+                    if ((Keys.A + i == Keys.F))
+                    {
+                        switchConsiderFileNameCheckBox();
+                        return true;
+                    }
                     return true;
                 }
             }
@@ -1130,6 +1139,7 @@ namespace Company.VSAnything
 				request.m_MatchCase = (this.m_Settings.GetFindTextMatchCase(this.m_IsModal));
 				request.m_MaxResultCount = max_result_count;
 				request.m_TextBoxText = this.m_TextBox.Text;
+                request.m_bConsiderFileNameWhenMatchLineFail = this.m_bConsiderFileNameWhenMatchLineFail;
 				request.FindFinished = new FindFinishedHandler(this.FindTextFinished);
 				SettingsDialogPage settings = VSAnythingPackage.Inst.GetSettingsDialogPage();
 				this.m_TextFinder.Find(request, this.m_FilesToSearch, FastFindControl.m_UnsavedDocuments, settings.FindTextPathMode, this.m_SolutionFiles.SolutionRootDir, ext_override, this.m_bWholeWord,false);
@@ -1157,7 +1167,7 @@ namespace Company.VSAnything
 				{
 					this.m_TextFinderResults.Add(filler);
 				}
-			}
+			} 
 			this.UpdateListBox();
 			if (limited_match && this.m_TextBox.Text == request.m_TextBoxText)
 			{
@@ -1572,14 +1582,15 @@ namespace Company.VSAnything
 		private void InitializeComponent()
 		{
             this.m_OptionsPanel = new System.Windows.Forms.Panel();
+            this.considerFileName_checkBox1 = new System.Windows.Forms.CheckBox();
             this.m_CheckBoxShowCurrFile = new System.Windows.Forms.CheckBox();
             this.m_FullPathTextBox = new System.Windows.Forms.Label();
             this.m_TextBoxPanel = new System.Windows.Forms.Panel();
             this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
             this.label_search_mode = new System.Windows.Forms.Label();
+            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.m_OptionsButton = new System.Windows.Forms.Button();
-            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.m_ListBox = new Company.VSAnything.MyListBox();
             this.m_OptionsPanel.SuspendLayout();
             this.m_TextBoxPanel.SuspendLayout();
@@ -1588,6 +1599,7 @@ namespace Company.VSAnything
             // 
             // m_OptionsPanel
             // 
+            this.m_OptionsPanel.Controls.Add(this.considerFileName_checkBox1);
             this.m_OptionsPanel.Controls.Add(this.m_CheckBoxShowCurrFile);
             this.m_OptionsPanel.Controls.Add(this.m_FullPathTextBox);
             this.m_OptionsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -1595,6 +1607,17 @@ namespace Company.VSAnything
             this.m_OptionsPanel.Name = "m_OptionsPanel";
             this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 67);
             this.m_OptionsPanel.TabIndex = 0;
+            // 
+            // considerFileName_checkBox1
+            // 
+            this.considerFileName_checkBox1.AutoSize = true;
+            this.considerFileName_checkBox1.Location = new System.Drawing.Point(341, 6);
+            this.considerFileName_checkBox1.Name = "considerFileName_checkBox1";
+            this.considerFileName_checkBox1.Size = new System.Drawing.Size(342, 28);
+            this.considerFileName_checkBox1.TabIndex = 15;
+            this.considerFileName_checkBox1.Text = "Consider &FileName Of Line";
+            this.considerFileName_checkBox1.UseVisualStyleBackColor = true;
+            this.considerFileName_checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
             // 
             // m_CheckBoxShowCurrFile
             // 
@@ -1661,6 +1684,21 @@ namespace Company.VSAnything
             this.label_search_mode.Text = "Search Mode <AND>：";
             this.label_search_mode.Click += new System.EventHandler(this.label_search_mode_Click);
             // 
+            // m_TextBox
+            // 
+            this.m_TextBox.BackColor = System.Drawing.Color.Black;
+            this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.m_TextBox.ForeColor = System.Drawing.Color.White;
+            this.m_TextBox.Location = new System.Drawing.Point(395, 5);
+            this.m_TextBox.Margin = new System.Windows.Forms.Padding(3, 0, 3, 5);
+            this.m_TextBox.Name = "m_TextBox";
+            this.m_TextBox.Size = new System.Drawing.Size(1235, 50);
+            this.m_TextBox.TabIndex = 0;
+            this.m_TextBox.TabStop = false;
+            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
+            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
+            // 
             // button1
             // 
             this.button1.Dock = System.Windows.Forms.DockStyle.Right;
@@ -1690,21 +1728,6 @@ namespace Company.VSAnything
             this.m_OptionsButton.Text = "Setting";
             this.m_OptionsButton.UseVisualStyleBackColor = false;
             this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
-            // 
-            // m_TextBox
-            // 
-            this.m_TextBox.BackColor = System.Drawing.Color.Black;
-            this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.m_TextBox.ForeColor = System.Drawing.Color.White;
-            this.m_TextBox.Location = new System.Drawing.Point(395, 5);
-            this.m_TextBox.Margin = new System.Windows.Forms.Padding(3, 0, 3, 5);
-            this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1235, 50);
-            this.m_TextBox.TabIndex = 0;
-            this.m_TextBox.TabStop = false;
-            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
-            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // m_ListBox
             // 
@@ -1769,6 +1792,10 @@ namespace Company.VSAnything
             this.m_CheckBoxShowCurrFile.Checked = !this.m_CheckBoxShowCurrFile.Checked;
         }
 
+        private void switchConsiderFileNameCheckBox()
+        {
+            this.considerFileName_checkBox1.Checked = !this.considerFileName_checkBox1.Checked;
+        }
         private void radioButton_CheckedChanged(object sender, EventArgs e)
         {
             // 把焦点还回去
@@ -1801,6 +1828,17 @@ namespace Company.VSAnything
 
             }
             
+        }
+
+        private void checkBox1_CheckedChanged_1(object sender, EventArgs e)
+        {
+            // 把焦点还回去
+            this.m_TextBox.Focus();
+
+            this.m_bConsiderFileNameWhenMatchLineFail = this.considerFileName_checkBox1.Checked;
+
+            this.RefreshFindResults(true);
+
         }
  	}
 }

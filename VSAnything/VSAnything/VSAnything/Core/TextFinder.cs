@@ -30,6 +30,8 @@ namespace Company.VSAnything
 
 			public bool m_RegExpression;
 
+            public bool m_bConsiderFileNameWhenMatchLineFail; // 当该行匹配失败时，用其中失败的条件去匹配文件名
+
 			public List<List<TextFinderResult>> m_MatchingWordsLists = new List<List<TextFinderResult>>();
 		}
 
@@ -60,7 +62,9 @@ namespace Company.VSAnything
 
 		private int m_TotalResultCount;
 
-		private int m_ThreadCount = Math.Max(1, Environment.ProcessorCount - 1);
+		//private int m_ThreadCount = Math.Max(1, Environment.ProcessorCount - 1);    // 线程数
+        private int m_ThreadCount = 1;    // 调试用
+
 
 		private AutoResetEvent m_FindthreadFinished = new AutoResetEvent(false);
 
@@ -526,6 +530,7 @@ namespace Company.VSAnything
 			job.m_ExtOverride = ext_override;
 			job.m_MatchWholeWord = match_whole_word;
 			job.m_RegExpression = reg_expression;
+            job.m_bConsiderFileNameWhenMatchLineFail = request.m_bConsiderFileNameWhenMatchLineFail;
 			foreach (UnsavedDocument unsaved_document in unsaved_documents)
 			{
 				string filename = Utils.NormalisePath(unsaved_document.Filename);
@@ -890,6 +895,20 @@ namespace Company.VSAnything
 			return (start == 0 || !this.IsWordChar(line[start - 1])) && (end == line.Length || !this.IsWordChar(line[end]));
 		}
 
+        private int getMatchCount(bool[] pattern_match_results)
+        {
+            int nCount = 0;
+
+            for (int i = 0; i < pattern_match_results.Length; ++i)
+            {
+                if (pattern_match_results[i] == true)
+                {
+                    ++nCount;
+                }
+            }
+            return nCount;
+
+        }
 		private void SearchFile(TextFinder.TextFinderJob job, string filename, List<string> lines, List<string> lines_lowercase, Pattern[] patterns, bool match_case, bool match_whole_word, AsyncTask.Context context, List<TextFinderResult> matching_words, ref int matching_word_index)
 		{
 			try
@@ -903,7 +922,35 @@ namespace Company.VSAnything
 				{
 					int match_start = 2147483647;
 					int match_end = -2147483648;
-					if (this.MatchLine(line, patterns, match_whole_word, pattern_match_results, ref match_start, ref match_end) && this.ApplyLogicalOperators(patterns, pattern_match_results))
+
+                    bool bMatchLine = this.MatchLine(line, patterns, match_whole_word, pattern_match_results, ref match_start, ref match_end);
+                    bool bLogicPass = this.ApplyLogicalOperators(patterns, pattern_match_results);
+
+                    bool bPass = bMatchLine && bLogicPass;
+
+                    /// 如果仅通过匹配该行文本无法通过，但是允许用文件名来弥补不通过的部分，那可能还有的救
+                    if (!bPass && job.m_bConsiderFileNameWhenMatchLineFail)
+                    {
+                        bool bMatchFileName = tryConsiderFileName(filename,line, patterns, pattern_match_results);
+                        if (bMatchFileName)
+                        {
+                            int nOldMatchCount = getMatchCount(pattern_match_results);
+                            if (nOldMatchCount > 0)
+                            {
+                                // 如果旧的至少匹配了一个，那么暂时还是用它来高亮好了
+                            }
+                            else
+                            {
+                                match_start = 0;
+                                match_end = 0;  //mario todo
+                            }
+
+                            bPass = true;
+                        }
+
+                    }
+
+					if (bPass)
 					{
 						TextFinderResult matching_word = default(TextFinderResult);
 						matching_word.m_Filename = filename;
@@ -911,9 +958,11 @@ namespace Company.VSAnything
 						matching_word.m_Line = lines[index];
 						matching_word.m_StartIndex = match_start;
 						matching_word.m_EndIndex = match_end;
+
 						int num = matching_word_index;
 						matching_word_index = num + 1;
 						matching_word.m_Index = num;
+
 						if (job.m_PathMode == PathMode.Relative)
 						{
 							matching_word.m_Filename = Misc.GetRelativePath(job.m_RootPath, matching_word.m_Filename);
@@ -936,7 +985,39 @@ namespace Company.VSAnything
 				Utils.LogException(arg_11B_0);
 			}
 		}
+        private bool tryConsiderFileName(string filePath,string line, Pattern[] patterns, bool[] line_pattern_match_results)
+        {
+            bool bLineAtleastOneMatch = true;  // Line至少要有一个匹配才考虑名字，避免结果太多
+            // 先找出不匹配的那部分
+            int nMatchCnt = getMatchCount(line_pattern_match_results);
+            int nUnMatchNum = patterns.Length - nMatchCnt;
 
+            Pattern[] unMatchPatterns = new Pattern[nUnMatchNum];
+            int nIndex = 0;
+            for (int i = 0; i < patterns.Length; ++i)
+            {
+                if (line_pattern_match_results[i] != true)
+                {
+                    unMatchPatterns[nIndex++] = patterns[i];
+                }
+            }
+
+            if (bLineAtleastOneMatch && nUnMatchNum == patterns.Length)
+            {
+                return false;   // 连至少一个匹配都没有，滚吧
+            }
+
+            bool[] new_pattern_match_results = new bool[unMatchPatterns.Length];
+            int new_match_start = 2147483647;
+            int new_match_end = -2147483648;
+
+            string fileName = Path.GetFileName(filePath).ToLower();
+
+            bool bMatchFileName = this.MatchLine(fileName, unMatchPatterns, false, new_pattern_match_results, ref new_match_start, ref new_match_end);
+            bool bLogicPass = this.ApplyLogicalOperators(unMatchPatterns, new_pattern_match_results);
+
+            return bMatchFileName && bLogicPass;
+        }
 		private void SearchFile_Wildcards(TextFinder.TextFinderJob job, string filename, List<string> lines, List<string> lines_lowercase, Pattern[] patterns, bool match_case, bool match_whole_word, AsyncTask.Context context, List<TextFinderResult> matching_words, ref int matching_word_index)
 		{
 			try

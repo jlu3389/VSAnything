@@ -15,5 +15,7 @@ namespace Company.VSAnything
 		public int m_EndIndex;
 
 		public int m_Index;
+
+        bool bConsiderFileName; // 有部分是通过文件名匹配到的
 	}
 }
