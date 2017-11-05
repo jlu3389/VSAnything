@@ -1588,9 +1588,9 @@ namespace Company.VSAnything
             this.m_TextBoxPanel = new System.Windows.Forms.Panel();
             this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
             this.label_search_mode = new System.Windows.Forms.Label();
-            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.m_OptionsButton = new System.Windows.Forms.Button();
+            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.m_ListBox = new Company.VSAnything.MyListBox();
             this.m_OptionsPanel.SuspendLayout();
             this.m_TextBoxPanel.SuspendLayout();
@@ -1653,9 +1653,9 @@ namespace Company.VSAnything
             this.m_TextBoxPanel.Controls.Add(this.m_TextBoxBorderPanel);
             this.m_TextBoxPanel.Controls.Add(this.m_OptionsButton);
             this.m_TextBoxPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 730);
+            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 716);
             this.m_TextBoxPanel.Name = "m_TextBoxPanel";
-            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 62);
+            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 76);
             this.m_TextBoxPanel.TabIndex = 0;
             // 
             // m_TextBoxBorderPanel
@@ -1668,36 +1668,23 @@ namespace Company.VSAnything
             this.m_TextBoxBorderPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.m_TextBoxBorderPanel.Location = new System.Drawing.Point(0, 0);
             this.m_TextBoxBorderPanel.Name = "m_TextBoxBorderPanel";
-            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1630, 60);
+            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1600, 74);
             this.m_TextBoxBorderPanel.TabIndex = 0;
             // 
             // label_search_mode
             // 
             this.label_search_mode.Dock = System.Windows.Forms.DockStyle.Left;
             this.label_search_mode.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.label_search_mode.Font = new System.Drawing.Font("NSimSun", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_search_mode.Font = new System.Drawing.Font("NSimSun", 13.875F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label_search_mode.ForeColor = System.Drawing.Color.DarkOrchid;
             this.label_search_mode.Location = new System.Drawing.Point(0, 0);
+            this.label_search_mode.Margin = new System.Windows.Forms.Padding(0);
             this.label_search_mode.Name = "label_search_mode";
-            this.label_search_mode.Size = new System.Drawing.Size(389, 60);
+            this.label_search_mode.Size = new System.Drawing.Size(389, 74);
             this.label_search_mode.TabIndex = 17;
             this.label_search_mode.Text = "Search Mode <AND>£º";
+            this.label_search_mode.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.label_search_mode.Click += new System.EventHandler(this.label_search_mode_Click);
-            // 
-            // m_TextBox
-            // 
-            this.m_TextBox.BackColor = System.Drawing.Color.Black;
-            this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 16.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.m_TextBox.ForeColor = System.Drawing.Color.White;
-            this.m_TextBox.Location = new System.Drawing.Point(395, 5);
-            this.m_TextBox.Margin = new System.Windows.Forms.Padding(3, 0, 3, 5);
-            this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1235, 50);
-            this.m_TextBox.TabIndex = 0;
-            this.m_TextBox.TabStop = false;
-            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
-            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // button1
             // 
@@ -1706,9 +1693,9 @@ namespace Company.VSAnything
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.button1.Location = new System.Drawing.Point(1579, 0);
+            this.button1.Location = new System.Drawing.Point(1549, 0);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(51, 60);
+            this.button1.Size = new System.Drawing.Size(51, 74);
             this.button1.TabIndex = 2;
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.OldSearchesDropDownButtonClicked);
@@ -1721,13 +1708,28 @@ namespace Company.VSAnything
             this.m_OptionsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.m_OptionsButton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.m_OptionsButton.ImageKey = "(none)";
-            this.m_OptionsButton.Location = new System.Drawing.Point(1630, 0);
+            this.m_OptionsButton.Location = new System.Drawing.Point(1600, 0);
             this.m_OptionsButton.Name = "m_OptionsButton";
-            this.m_OptionsButton.Size = new System.Drawing.Size(61, 60);
+            this.m_OptionsButton.Size = new System.Drawing.Size(91, 74);
             this.m_OptionsButton.TabIndex = 1;
             this.m_OptionsButton.Text = "Setting";
             this.m_OptionsButton.UseVisualStyleBackColor = false;
             this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
+            // 
+            // m_TextBox
+            // 
+            this.m_TextBox.BackColor = System.Drawing.Color.Black;
+            this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.m_TextBox.ForeColor = System.Drawing.Color.White;
+            this.m_TextBox.Location = new System.Drawing.Point(395, 9);
+            this.m_TextBox.Margin = new System.Windows.Forms.Padding(3, 0, 3, 10);
+            this.m_TextBox.Name = "m_TextBox";
+            this.m_TextBox.Size = new System.Drawing.Size(1235, 55);
+            this.m_TextBox.TabIndex = 0;
+            this.m_TextBox.TabStop = false;
+            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
+            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
             // 
             // m_ListBox
             // 
