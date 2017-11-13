@@ -15,6 +15,8 @@ namespace Company.VSAnything
 
 		public string m_TextBoxText;
 
+	    public bool m_bConsiderFileNameWhenMatchLineFail = false;
+
 		public FindFinishedHandler FindFinished;
 	}
 }
