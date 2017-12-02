@@ -1331,7 +1331,7 @@ namespace Company.VSAnything
 			solution_path = solution_path.Replace('\\', '_');
 			solution_path = solution_path.Replace(':', '_');
 			solution_path = solution_path.Replace('.', '_');
-			return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FastFind\\" + solution_path + ".ff_cache";
+			return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\VSAnything\\" + solution_path + ".ff_cache";
 		}
 
 		private void Read(AsyncTask.Context context)

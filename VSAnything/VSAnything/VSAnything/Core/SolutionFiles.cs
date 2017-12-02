@@ -84,7 +84,7 @@ namespace Company.VSAnything
 		{
 			get
 			{
-				return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\FastFind\\FastFind_solution.ff_cache";
+				return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\VSAnything\\FastFind_solution.ff_cache";
 			}
 		}
 
