@@ -679,7 +679,7 @@ namespace Company.VSAnything
 					UnsavedDocument unsaved_document;
 					if (job.m_UnsavedDocuments.TryGetValue(file, out unsaved_document))
 					{
-						this.SearchFile(job, unsaved_document.Filename, unsaved_document.Lines, unsaved_document.LinesLowercase, patterns, request.m_MatchCase, match_whole_word, parent_context, matching_words, ref matching_word_index);
+						this.SearchFileNew(job, unsaved_document.Filename, unsaved_document.Lines, unsaved_document.LinesLowercase, patterns, request.m_MatchCase, match_whole_word, parent_context, matching_words, ref matching_word_index);
 					}
 					else
 					{
@@ -703,7 +703,7 @@ namespace Company.VSAnything
 							CachedFile obj = cached_file;
 							lock (obj)
 							{
-								this.SearchFile(job, cached_file.m_Filename, cached_file.m_Lines, cached_file.m_LinesLowercase, patterns, request.m_MatchCase, match_whole_word, parent_context, matching_words, ref matching_word_index);
+								this.SearchFileNew(job, cached_file.m_Filename, cached_file.m_Lines, cached_file.m_LinesLowercase, patterns, request.m_MatchCase, match_whole_word, parent_context, matching_words, ref matching_word_index);
 							}
 						}
 						if (parent_context.Cancelled)
@@ -909,6 +909,63 @@ namespace Company.VSAnything
             return nCount;
 
         }
+        private void SearchFileNew(TextFinder.TextFinderJob job, string filename, List<string> lines, List<string> lines_lowercase, Pattern[] patterns, bool match_case, bool match_whole_word, AsyncTask.Context context, List<TextFinderResult> matching_words, ref int matching_word_index)
+        {
+            try
+            {
+                FindTextRequest arg_06_0 = job.m_Request;
+                List<string> arg_28_0 = match_case ? lines : lines_lowercase;
+                int max_result_count = job.m_Request.m_MaxResultCount;
+                bool[] pattern_match_results = new bool[patterns.Length];
+                int index = 0;
+
+                if(job.m_bConsiderFileNameWhenMatchLineFail)
+                {
+                    filename = Path.GetFileName(filename).ToLower();
+                }
+                foreach (string line in arg_28_0)
+                {
+                    int match_start = 2147483647;
+                    int match_end = -2147483648;
+
+                    bool bPass = this.MatchLineNew(line, ref patterns, job.m_bConsiderFileNameWhenMatchLineFail,ref filename,ref match_start, ref match_end);
+
+                    if (bPass)
+                    {
+                        TextFinderResult matching_word = default(TextFinderResult);
+                        matching_word.m_Filename = filename;
+                        matching_word.m_LineIndex = index;
+                        matching_word.m_Line = lines[index];
+                        matching_word.m_StartIndex = match_start;
+                        matching_word.m_EndIndex = match_end;
+
+                        int num = matching_word_index;
+                        matching_word_index = num + 1;
+                        matching_word.m_Index = num;
+
+                        if (job.m_PathMode == PathMode.Relative)
+                        {
+                            matching_word.m_Filename = Misc.GetRelativePath(job.m_RootPath, matching_word.m_Filename);
+                        }
+                        matching_words.Add(matching_word);
+                        if (matching_words.Count == max_result_count)
+                        {
+                            break;
+                        }
+                    }
+                    if (context.Cancelled)
+                    {
+                        break;
+                    }
+                    index++;
+                }
+            }
+            catch (Exception arg_11B_0)
+            {
+                Utils.LogException(arg_11B_0);
+            }
+        }
+
 		private void SearchFile(TextFinder.TextFinderJob job, string filename, List<string> lines, List<string> lines_lowercase, Pattern[] patterns, bool match_case, bool match_whole_word, AsyncTask.Context context, List<TextFinderResult> matching_words, ref int matching_word_index)
 		{
 			try
@@ -1121,8 +1178,69 @@ namespace Company.VSAnything
 			}
 			return index;
 		}
+        private bool MatchLineNew(string line, ref Pattern[] patterns, bool bConsiderFileName,ref string filename,ref int match_start, ref int match_end)
+        {
+            int nWordMatchCount = 0;    // 词组里至少有一个匹配
+            int nFileNameMatchCound = 0;
 
-		private bool MatchLine(string line, Pattern[] patterns, bool match_whole_word, bool[] pattern_match_results, ref int match_start, ref int match_end)
+            for (int j = 0; j < patterns.Length; j++)
+            {
+                Pattern pattern = patterns[j];
+                bool pattern_match = false;
+                int offset = 0;
+                int start = -1;
+                int end = -1;
+
+                int index = line.IndexOf(pattern.m_Pattern, StringComparison.Ordinal);
+                if (index != -1)
+                {
+                    /// 该词匹配到了
+                    pattern_match = true;
+                    start = index;
+                    end = start + pattern.m_Pattern.Length;
+                    nWordMatchCount++;
+
+                    if (pattern_match)
+                    {
+                        start += offset;
+                        end += offset;
+                        if (start < match_start)
+                        {
+                            match_start = start;
+                        }
+                        if (end > match_end)
+                        {
+                            match_end = end;
+                        }
+                    }
+                }
+                else
+                {
+                    /// 该词不匹配，如果不能用文件名来弥补，那么该行不匹配
+                    if(!bConsiderFileName)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        /// 尝试用文件名来弥补
+                        int fIndex = filename.IndexOf(pattern.m_Pattern, StringComparison.Ordinal);
+                        if(fIndex != -1)
+                        {
+                            /// 文件名可以弥补
+                            nFileNameMatchCound++; 
+                        }
+                        else
+                        {
+                            /// 文件名都弥补不了，该行不匹配
+                            return false;
+                        }
+                    }
+                }
+            }
+            return nWordMatchCount > 0;
+        }
+        private bool MatchLine(string line, Pattern[] patterns, bool match_whole_word, bool[] pattern_match_results, ref int match_start, ref int match_end)
 		{
 			bool found_match = false;
 			int i = 0;
@@ -1336,6 +1454,8 @@ namespace Company.VSAnything
 
 		private void Read(AsyncTask.Context context)
 		{
+            Log.WriteLine("Begin Read CacheFile :" + (string)context.Arg);
+
             /// 读取缓存文件内容，直接用于文本查找
 			string cache_filename = TextFinder.GetCacheFilename((string)context.Arg);
 			Dictionary<string, CachedFile> file_cache = new Dictionary<string, CachedFile>();
@@ -1343,9 +1463,11 @@ namespace Company.VSAnything
 			{
 				if (!File.Exists(cache_filename))
 				{
+                    Log.WriteLine("file not exist,return");
 					return;
 				}
-				for (int i = 0; i < 10; i++)
+                long nTotalLines = 0;
+                for (int i = 0; i < 10; i++)
 				{
 					try
 					{
@@ -1355,15 +1477,19 @@ namespace Company.VSAnything
 							return;
 						}
 						int count = reader.ReadInt32();
-						for (int j = 0; j < count; j++)
+                        
+                        Log.WriteLine("cache File nums = " + count);
+                        for (int j = 0; j < count; j++)
 						{
 							string filename = reader.ReadString();
 							CachedFile cached_file = new CachedFile();
 							cached_file.Read(reader);
 							file_cache[filename] = cached_file;
+                            nTotalLines += cached_file.m_LinesLowercase.Count();
 							if (context.Cancelled)
 							{
-								break;
+                                Log.WriteLine("read context.cancelled,break");
+                                break;
 							}
 						}
 						reader.Close();
@@ -1371,14 +1497,17 @@ namespace Company.VSAnything
 					}
 					catch (Exception arg_8F_0)
 					{
-						Utils.LogExceptionQuiet(arg_8F_0);
+                        Log.WriteLine("Exception arg_8F_0");
+                        Utils.LogExceptionQuiet(arg_8F_0);
 						Thread.Sleep(100);
 					}
 				}
-			}
+                Log.WriteLine("cache line nums = " + nTotalLines);
+            }
 			catch (Exception arg_A8_0)
 			{
-				Utils.LogExceptionQuiet(arg_A8_0);
+                Log.WriteLine("Exception arg_A8_0");
+                Utils.LogExceptionQuiet(arg_A8_0);
 			}
 			Dictionary<string, CachedFile> fileCache = this.m_FileCache;
 			lock (fileCache)
@@ -1393,7 +1522,8 @@ namespace Company.VSAnything
 				}
 				timer.Stop();
 			}
-		}
+            Log.WriteLine("End Read CacheFile :" + (string)context.Arg);
+        }
 
 		public void Write()
 		{
