@@ -62,8 +62,8 @@ namespace Company.VSAnything
 
 		private int m_TotalResultCount;
 
-		//private int m_ThreadCount = Math.Max(1, Environment.ProcessorCount - 1);    // 线程数
-        private int m_ThreadCount = 1;    // 调试用
+		private int m_ThreadCount = Math.Max(1, Environment.ProcessorCount - 1);    // 线程数
+        //private int m_ThreadCount = 1;    // 调试用
 
 
 		private AutoResetEvent m_FindthreadFinished = new AutoResetEvent(false);
