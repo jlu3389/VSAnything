@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-
+using System.Diagnostics;
 namespace SCLCoreCLR
 {
 	public class Log
@@ -101,12 +101,14 @@ namespace SCLCoreCLR
 
 		public static void WriteLine(string message, LogVerbosity verbosity)
 		{
-			Log.Write(message + "\n", verbosity);
+            Trace.WriteLine(message);
+            Log.Write(message + "\n", verbosity);
 		}
 
 		public static void WriteLine(string message)
 		{
-			Log.WriteLine(message, LogVerbosity.Normal);
+            Trace.WriteLine(message);
+            Log.WriteLine(message, LogVerbosity.Normal);
 		}
 	}
 }

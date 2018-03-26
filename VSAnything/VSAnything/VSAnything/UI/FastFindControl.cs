@@ -188,6 +188,9 @@ namespace Company.VSAnything
         private bool m_bConsiderFileNameWhenMatchLineFail = false;   //
         private Pattern.Operator m_currOp = Pattern.Operator.AND;    // 默认使用And
 
+        private string m_oldtextWhenBeginAutoOpenDocTimer;  // 开启自动打开文档timer时，当前搜索框内容
+        System.Windows.Forms.Timer m_autoOpenDocTimer = new System.Windows.Forms.Timer();
+
         private string m_strOpAndText = "Search Mode <AND>：";
         private string m_strOpOrText  = "Search Mode <OR >：";
 
@@ -849,13 +852,15 @@ namespace Company.VSAnything
 			{
                 this.ScrollSelectionTo(this.m_ListBox.SelectedIndex - 1, false);
                 this.UpdateInitialSelectedItem();
+                this.checkAutoOpenDoc();    // 延迟自动打开文档
                 return true;
 			}
             if (keyData == Keys.Down || (keyData == (Keys.Control | Keys.J)))
 			{
                 this.ScrollSelectionTo(this.m_ListBox.SelectedIndex + 1, false);
 				this.UpdateInitialSelectedItem();
-				return true;
+                this.checkAutoOpenDoc();    // 延迟自动打开文档
+                return true;
 			}
             if (keyData == Keys.Tab)
             {
@@ -1842,5 +1847,45 @@ namespace Company.VSAnything
             this.RefreshFindResults(true);
 
         }
- 	}
+        private void checkAutoOpenDoc()
+        {
+            if(this.m_CheckBoxShowCurrFile.Checked)
+            {
+                this.stopAutoOpenDocTimer();
+                this.onAutoOpenDoc();
+            }
+            else
+            {
+                startAutoOpenDocTimer();
+            }
+        }
+        private void startAutoOpenDocTimer()
+        {
+            this.stopAutoOpenDocTimer();
+            this.m_autoOpenDocTimer.Interval = 500;
+            this.m_autoOpenDocTimer.Tick += new EventHandler(this.autoOpenDocTimerTick);
+            this.m_autoOpenDocTimer.Enabled = true;
+            this.m_autoOpenDocTimer.Start();
+            this.m_oldtextWhenBeginAutoOpenDocTimer = this.m_TextBox.Text;
+
+        }
+        private void stopAutoOpenDocTimer()
+        {
+            this.m_autoOpenDocTimer.Stop();
+            this.m_autoOpenDocTimer.Enabled = false;
+        }
+        private void autoOpenDocTimerTick(object sender, EventArgs e)
+        {
+            this.stopAutoOpenDocTimer();
+            if(this.m_TextBox.Text == this.m_oldtextWhenBeginAutoOpenDocTimer)
+            {
+                this.m_oldtextWhenBeginAutoOpenDocTimer = "";
+                this.onAutoOpenDoc();
+            }
+        }
+        private void onAutoOpenDoc()
+        {
+            this.Submit();
+        }
+    }
 }

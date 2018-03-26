@@ -94,10 +94,6 @@ namespace Company.VSAnything
 
         private Dictionary<string, VSAnythingPackage.ActivateDocEvent> m_ActivateDocEvents = new Dictionary<string, VSAnythingPackage.ActivateDocEvent>();
 
-        private VSAnythingPackage.ActivateDocEvent m_ForceActivateDocEvent;
-
-		private int m_ForceActivateDocCount;
-
 
 
         public static VSAnythingPackage Inst
@@ -196,11 +192,11 @@ namespace Company.VSAnything
 			VSAnythingPackage.ActivateDocEvent active_doc_event;
 			if (this.m_ActivateDocEvents.TryGetValue(doc_name, out active_doc_event))
 			{
-				if (active_doc_event.m_SetLine || Environment.TickCount - active_doc_event.m_RequestTime < 200)
-				{
-					return active_doc_event;
-				}
-				this.m_ActivateDocEvents.Remove(doc_name);
+                if (active_doc_event.m_SetLine/* || Environment.TickCount - active_doc_event.m_RequestTime < 200*/)
+                {
+                    this.m_ActivateDocEvents.Remove(doc_name);
+                    return active_doc_event;
+                }
 			}
 			return null;
 		}
@@ -210,6 +206,7 @@ namespace Company.VSAnything
 			if (GotFocus.Caption == VSAnythingPackage.m_ProductName)
 			{
                 //this.m_FastFindWindowCmd.SelectText(false);
+                return;
 			}
 			string doc_name = null;
 			if (GotFocus != null && GotFocus.Document != null)
@@ -222,35 +219,37 @@ namespace Company.VSAnything
 				if (active_doc_event.m_Line != -1)
 				{
                     this.m_DTE.SetActiveDocumentLine(active_doc_event.m_Line);
-                    /// 通过ListBox打开文档后，把焦点拿回来，否则在非autoHide 情况下，界面不会关掉，很烦
-                    ToolWindowPane window = VSAnythingPackage.Inst.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
-                    if (window != null && window.Frame != null)
-                    {
-                        Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame frame = (Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame)window.Frame;
-                        if(frame != null && frame.IsVisible() == 0) // 0 is visible !!!
-                        {
-                            frame.Show();
-                        }
 
-                    }
-
-				}
+                    ///// 打开新文档后，把焦点拿回来。如果之后想关闭搜索窗口，只要按一个ESC就行了
+                    ActivateToolWindowTimer();
+                }
 				active_doc_event.m_SetLine = false;
 			}
-			if (this.m_ForceActivateDocEvent != null && doc_name != this.m_ForceActivateDocEvent.m_Filename)
-			{
-				if (Environment.TickCount - this.m_ForceActivateDocEvent.m_RequestTime < 200 && this.m_ForceActivateDocCount > 0)
-				{
-					this.m_ForceActivateDocCount--;
-					this.m_ForceActivateDocEvent.m_SetLine = true;
-					this.m_DTE.OpenFile(this.m_ForceActivateDocEvent.m_Filename);
-					return;
-				}
-				this.m_ForceActivateDocEvent = null;
-			}
 		}
+        private System.Windows.Forms.Timer m_UpdateTimer = new System.Windows.Forms.Timer();
 
-		public void ActivateDoc(string filename, int line, bool force)
+        public void ActivateToolWindowTimer()
+        {
+            m_UpdateTimer.Stop();
+            m_UpdateTimer.Interval = 1;
+            m_UpdateTimer.Tick += new EventHandler(this.TimerTick);
+            m_UpdateTimer.Start();
+        }
+        private void TimerTick(object sender, EventArgs e)
+        {
+            m_UpdateTimer.Stop();
+            ToolWindowPane window = VSAnythingPackage.Inst.FindToolWindow(typeof(FastFindToolWindowPane), 0, true);
+            if (window != null && window.Frame != null)
+            {
+                Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame frame = (Microsoft.VisualStudio.Shell.Interop.IVsWindowFrame)window.Frame;
+                if (frame != null && frame.IsVisible() == 0) // 0 is visible !!!
+                {
+                    frame.Show();
+                }
+
+            }
+        }
+        public void ActivateDoc(string filename, int line, bool force)
 		{
 			VSAnythingPackage.ActivateDocEvent activation_event = new VSAnythingPackage.ActivateDocEvent();
 			filename = Utils.NormalisePathAndLowerCase(filename);
@@ -259,11 +258,6 @@ namespace Company.VSAnything
 			activation_event.m_Filename = filename;
 			activation_event.m_Line = line;
 			this.m_ActivateDocEvents[activation_event.m_Filename] = activation_event;
-			if (force)
-			{
-				this.m_ForceActivateDocCount = 2;
-				this.m_ForceActivateDocEvent = activation_event;
-			}
 		}
 
 		private void WelcomeThread()
