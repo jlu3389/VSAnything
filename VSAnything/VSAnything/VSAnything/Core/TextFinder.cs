@@ -909,7 +909,7 @@ namespace Company.VSAnything
             return nCount;
 
         }
-        private void SearchFileNew(TextFinder.TextFinderJob job, string filename, List<string> lines, List<string> lines_lowercase, Pattern[] patterns, bool match_case, bool match_whole_word, AsyncTask.Context context, List<TextFinderResult> matching_words, ref int matching_word_index)
+        private void SearchFileNew(TextFinder.TextFinderJob job, string filepath, List<string> lines, List<string> lines_lowercase, Pattern[] patterns, bool match_case, bool match_whole_word, AsyncTask.Context context, List<TextFinderResult> matching_words, ref int matching_word_index)
         {
             try
             {
@@ -919,21 +919,22 @@ namespace Company.VSAnything
                 bool[] pattern_match_results = new bool[patterns.Length];
                 int index = 0;
 
+                string filename = "";
                 if(job.m_bConsiderFileNameWhenMatchLineFail)
                 {
-                    filename = Path.GetFileName(filename).ToLower();
+                    filename = Path.GetFileName(filepath).ToLower();
                 }
                 foreach (string line in arg_28_0)
                 {
                     int match_start = 2147483647;
                     int match_end = -2147483648;
 
-                    bool bPass = this.MatchLineNew(line, ref patterns, job.m_bConsiderFileNameWhenMatchLineFail,ref filename,ref match_start, ref match_end);
+                    bool bPass = this.MatchLineNew(line, ref patterns, job.m_bConsiderFileNameWhenMatchLineFail,ref filename, ref match_start, ref match_end);
 
                     if (bPass)
                     {
                         TextFinderResult matching_word = default(TextFinderResult);
-                        matching_word.m_Filename = filename;
+                        matching_word.m_Filename = filepath;
                         matching_word.m_LineIndex = index;
                         matching_word.m_Line = lines[index];
                         matching_word.m_StartIndex = match_start;
