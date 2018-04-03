@@ -1593,9 +1593,9 @@ namespace Company.VSAnything
             this.m_TextBoxPanel = new System.Windows.Forms.Panel();
             this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
             this.label_search_mode = new System.Windows.Forms.Label();
+            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.m_OptionsButton = new System.Windows.Forms.Button();
-            this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.m_ListBox = new Company.VSAnything.MyListBox();
             this.m_OptionsPanel.SuspendLayout();
             this.m_TextBoxPanel.SuspendLayout();
@@ -1691,6 +1691,21 @@ namespace Company.VSAnything
             this.label_search_mode.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             this.label_search_mode.Click += new System.EventHandler(this.label_search_mode_Click);
             // 
+            // m_TextBox
+            // 
+            this.m_TextBox.BackColor = System.Drawing.Color.Black;
+            this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.m_TextBox.ForeColor = System.Drawing.Color.White;
+            this.m_TextBox.Location = new System.Drawing.Point(169, 1);
+            this.m_TextBox.Margin = new System.Windows.Forms.Padding(0);
+            this.m_TextBox.Name = "m_TextBox";
+            this.m_TextBox.Size = new System.Drawing.Size(1235, 22);
+            this.m_TextBox.TabIndex = 0;
+            this.m_TextBox.TabStop = false;
+            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
+            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
+            // 
             // button1
             // 
             this.button1.Dock = System.Windows.Forms.DockStyle.Right;
@@ -1721,21 +1736,6 @@ namespace Company.VSAnything
             this.m_OptionsButton.UseVisualStyleBackColor = false;
             this.m_OptionsButton.Click += new System.EventHandler(this.OptionsButtonClicked);
             // 
-            // m_TextBox
-            // 
-            this.m_TextBox.BackColor = System.Drawing.Color.Black;
-            this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.m_TextBox.ForeColor = System.Drawing.Color.White;
-            this.m_TextBox.Location = new System.Drawing.Point(169, 1);
-            this.m_TextBox.Margin = new System.Windows.Forms.Padding(0);
-            this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1235, 22);
-            this.m_TextBox.TabIndex = 0;
-            this.m_TextBox.TabStop = false;
-            this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
-            this.m_TextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBoxKeyPress);
-            // 
             // m_ListBox
             // 
             this.m_ListBox.BackColor = System.Drawing.Color.Black;
@@ -1757,7 +1757,7 @@ namespace Company.VSAnything
             this.m_ListBox.ShowGettingSolutionFiles = false;
             this.m_ListBox.ShowNoItemsMessage = false;
             this.m_ListBox.ShowScanningFiles = false;
-            this.m_ListBox.Size = new System.Drawing.Size(1693, 859);
+            this.m_ListBox.Size = new System.Drawing.Size(1693, 780);
             this.m_ListBox.TabIndex = 10;
             this.m_ListBox.TabStop = false;
             this.m_ListBox.SelectedIndexchanged += new Company.VSAnything.MyListBox.SelectedIndexchangedHandler(this.ListBoxSelectedIndexChanged);
@@ -1767,9 +1767,9 @@ namespace Company.VSAnything
             // FastFindControl
             // 
             this.BackColor = System.Drawing.Color.Gray;
+            this.Controls.Add(this.m_ListBox);
             this.Controls.Add(this.m_TextBoxPanel);
             this.Controls.Add(this.m_OptionsPanel);
-            this.Controls.Add(this.m_ListBox);
             this.Name = "FastFindControl";
             this.Size = new System.Drawing.Size(1693, 859);
             this.m_OptionsPanel.ResumeLayout(false);
