@@ -216,6 +216,8 @@ namespace Company.VSAnything
         private Label label_search_mode;
         private FastFindTextBox m_TextBox;
         private CheckBox considerFileName_checkBox1;
+        private Label labelLineCount;
+        private Label labelFileCount;
         private MyListBox m_ListBox;
 
 		[method: CompilerGenerated]
@@ -361,6 +363,7 @@ namespace Company.VSAnything
 			string solution_filename = (string)arg;
 			this.SetSolutionFilename(solution_filename);
 			this.UpdateFilesToSearchAndRefresh();
+		    this.updateFilesLinesCount();
 		}
 
 		private void SetSolutionFilename(string solution_filename)
@@ -370,6 +373,7 @@ namespace Company.VSAnything
 				this.m_SolutionFilename = solution_filename;
 				this.m_AllSolutionFiles = new List<string>(this.m_SolutionFiles.Files);
 			}
+		    this.updateFilesLinesCount();
 		}
 
 		private void HookEvents()
@@ -535,6 +539,7 @@ namespace Company.VSAnything
 		{
 			this.m_AllSolutionFiles = (List<string>)arg;
 			this.UpdateFilesToSearchAndRefresh();
+		    this.updateFilesLinesCount();
 		}
 
 		private void UpdateFilesToSearchAndRefresh()
@@ -653,6 +658,7 @@ namespace Company.VSAnything
 
 		private void ScanFinished_MainThread()
 		{
+		    this.updateFilesLinesCount();
 			this.RefreshFindResults(true);
 		}
 
@@ -1587,6 +1593,8 @@ namespace Company.VSAnything
 		private void InitializeComponent()
 		{
             this.m_OptionsPanel = new System.Windows.Forms.Panel();
+            this.labelLineCount = new System.Windows.Forms.Label();
+            this.labelFileCount = new System.Windows.Forms.Label();
             this.considerFileName_checkBox1 = new System.Windows.Forms.CheckBox();
             this.m_CheckBoxShowCurrFile = new System.Windows.Forms.CheckBox();
             this.m_FullPathTextBox = new System.Windows.Forms.Label();
@@ -1604,6 +1612,8 @@ namespace Company.VSAnything
             // 
             // m_OptionsPanel
             // 
+            this.m_OptionsPanel.Controls.Add(this.labelLineCount);
+            this.m_OptionsPanel.Controls.Add(this.labelFileCount);
             this.m_OptionsPanel.Controls.Add(this.considerFileName_checkBox1);
             this.m_OptionsPanel.Controls.Add(this.m_CheckBoxShowCurrFile);
             this.m_OptionsPanel.Controls.Add(this.m_FullPathTextBox);
@@ -1612,6 +1622,26 @@ namespace Company.VSAnything
             this.m_OptionsPanel.Name = "m_OptionsPanel";
             this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 51);
             this.m_OptionsPanel.TabIndex = 0;
+            // 
+            // labelLineCount
+            // 
+            this.labelLineCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelLineCount.AutoSize = true;
+            this.labelLineCount.Location = new System.Drawing.Point(1593, 25);
+            this.labelLineCount.Name = "labelLineCount";
+            this.labelLineCount.Size = new System.Drawing.Size(53, 12);
+            this.labelLineCount.TabIndex = 17;
+            this.labelLineCount.Text = "Lines£º0";
+            // 
+            // labelFileCount
+            // 
+            this.labelFileCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelFileCount.AutoSize = true;
+            this.labelFileCount.Location = new System.Drawing.Point(1593, 3);
+            this.labelFileCount.Name = "labelFileCount";
+            this.labelFileCount.Size = new System.Drawing.Size(53, 12);
+            this.labelFileCount.TabIndex = 16;
+            this.labelFileCount.Text = "Files£º0";
             // 
             // considerFileName_checkBox1
             // 
@@ -1887,5 +1917,25 @@ namespace Company.VSAnything
         {
             this.Submit();
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+	    private void updateFilesLinesCount()
+	    {
+	        int nFileCnt = 0;
+	        int nLines = 0;
+	        if (this.m_SolutionFilename != null && this.m_SolutionFilename != "")
+	        {
+                int[] fileLines = this.m_TextFinder.getFileAndLineCount();
+	            nFileCnt = fileLines[0];
+	            nLines = fileLines[1];
+	        }
+            this.labelFileCount.Text = "Files£º" + nFileCnt.ToString();
+	        this.labelLineCount.Text = "Lines£º" + nLines.ToString();
+        }
+
     }
 }

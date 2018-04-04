@@ -152,7 +152,23 @@ namespace Company.VSAnything
 			}
 		}
 
-		public TextFinder()
+	    public int[] getFileAndLineCount()
+	    {
+	        int[] ret = new int[2];
+            Dictionary<string, CachedFile> fileCache = this.m_FileCache;
+            lock (fileCache)
+	        {
+	            foreach (KeyValuePair<string, CachedFile> entry in fileCache)
+	            {
+	                ret[0] ++;
+	                ret[1] += entry.Value.m_Lines.Count;
+	            }
+	        }
+            return ret;
+	    }
+
+
+	    public TextFinder()
 		{
 			this.SetupWordCharMap();
 			this.m_FileChangedHandlerTask = new AsyncTask(new AsyncTask.TaskFunction(this.HandleFileChangedEventsTask), "File Changed Thread");
