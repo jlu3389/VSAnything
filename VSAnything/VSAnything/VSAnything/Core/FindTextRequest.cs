@@ -18,5 +18,6 @@ namespace Company.VSAnything
 	    public bool m_bConsiderFileNameWhenMatchLineFail = false;
 
 		public FindFinishedHandler FindFinished;
+        public bool m_bUseNewSearch = true;
 	}
 }

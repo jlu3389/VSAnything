@@ -104,7 +104,10 @@ namespace SCLCoreCLR
             Trace.WriteLine(message);
             Log.Write(message + "\n", verbosity);
 		}
-
+        public static void logTrace(string message)
+        {
+            Trace.WriteLine(message);
+        }
 		public static void WriteLine(string message)
 		{
             Trace.WriteLine(message);

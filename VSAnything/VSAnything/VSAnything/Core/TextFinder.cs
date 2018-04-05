@@ -47,6 +47,24 @@ namespace Company.VSAnything
 
 			public AsyncTask.Context m_Context;
 		}
+        private class FindThreadShareContent
+        {
+            public List<List<string>> m_fileGroups = new List<List<string>>();
+            public List<List<TextFinderResult>> m_matchWordsList = new List<List<TextFinderResult>>();
+            public int m_nGroupToPorcess;
+            public int m_nGroupNum;
+            public int m_nCurrResultNum;
+            public int m_nMaxResultNum;
+        }
+        private class FindThreadMainArgNew
+        {
+            public int m_ThreadIndex;
+            public FindThreadShareContent m_nShareContent;
+            public object m_ShareContentLock;
+            public TextFinder.TextFinderJob m_Job;
+            public List<TextFinderResult> m_MatchingWords;
+            public AsyncTask.Context m_Context;
+        }
 
 		private List<string> m_FilesToScan = new List<string>();
 
@@ -69,6 +87,7 @@ namespace Company.VSAnything
 		private AutoResetEvent m_FindthreadFinished = new AutoResetEvent(false);
 
 		private List<AsyncTask> m_FindTextThreads = new List<AsyncTask>();
+        private List<AsyncTask> m_FindTextThreadsNew = new List<AsyncTask>();
 
 		private int m_ActiveThreadCount;
 
@@ -87,8 +106,9 @@ namespace Company.VSAnything
 		private AsyncTask m_ScanTask;
 
 		private AsyncTask m_FindTask;
+        private AsyncTask m_FindTaskNew;
 
-		private AsyncTask m_FileChangedHandlerTask;
+        private AsyncTask m_FileChangedHandlerTask;
 
 		private DirectoryWatcher m_DirectoryWatcher = new DirectoryWatcher();
 
@@ -176,11 +196,16 @@ namespace Company.VSAnything
 			this.m_ReadTask = new AsyncTask(new AsyncTask.TaskFunction(this.Read), "TextFinder Read Thread");
 			this.m_ScanTask = new AsyncTask(new AsyncTask.TaskFunction(this.ScanTask), "TextFinder Scan Thread");
 			this.m_FindTask = new AsyncTask(new AsyncTask.TaskFunction(this.FindTask), "TextFinder Find Thread");
-			for (int i = 0; i < this.m_ThreadCount; i++)
+            this.m_FindTaskNew = new AsyncTask(new AsyncTask.TaskFunction(this.FindTaskNew), "TextFinder Find TaskNew Thread");
+            for (int i = 0; i < this.m_ThreadCount; i++)
 			{
 				this.m_FindTextThreads.Add(new AsyncTask(new AsyncTask.TaskFunction(this.FindWorkerThreadMain), "FindTextThread" + i));
 			}
-		}
+            for (int i = 0; i < this.m_ThreadCount; i++)
+            {
+                this.m_FindTextThreadsNew.Add(new AsyncTask(new AsyncTask.TaskFunction(this.FindWorkerThreadMainNew), "FindTextThreadNew" + i));
+            }
+        }
 
 		public void Dispose()
 		{
@@ -200,6 +225,10 @@ namespace Company.VSAnything
 			{
 				this.m_FindTask.Dispose();
 			}
+            if(this.m_FindTaskNew != null)
+            {
+                this.m_FindTaskNew.Dispose();
+            }
 			using (List<AsyncTask>.Enumerator enumerator = this.m_FindTextThreads.GetEnumerator())
 			{
 				while (enumerator.MoveNext())
@@ -207,7 +236,14 @@ namespace Company.VSAnything
 					enumerator.Current.Dispose();
 				}
 			}
-			if (this.m_FindthreadFinished != null)
+            using (List<AsyncTask>.Enumerator enumerator = this.m_FindTextThreadsNew.GetEnumerator())
+            {
+                while (enumerator.MoveNext())
+                {
+                    enumerator.Current.Dispose();
+                }
+            }
+            if (this.m_FindthreadFinished != null)
 			{
 				this.m_FindthreadFinished.Dispose();
 				this.m_FindthreadFinished = null;
@@ -533,7 +569,9 @@ namespace Company.VSAnything
 			for (int i = 0; i < this.m_ThreadCount; i++)
 			{
 				this.m_FindTextThreads[i].Exit();
-			}
+                this.m_FindTextThreadsNew[i].Exit();
+            }
+
 		}
 
 		public void Find(FindTextRequest request, List<string> files_to_search, List<UnsavedDocument> unsaved_documents, PathMode path_mode, string solution_path, List<string> ext_override, bool match_whole_word, bool reg_expression)
@@ -552,8 +590,15 @@ namespace Company.VSAnything
 				string filename = Utils.NormalisePath(unsaved_document.Filename);
 				job.m_UnsavedDocuments[filename] = unsaved_document;
 			}
-			this.m_FindTask.Start(new AsyncTask.Context(job));
-		}
+            if(job.m_Request.m_bUseNewSearch)
+            {
+                this.m_FindTaskNew.Start(new AsyncTask.Context(job));
+
+            } else
+            {
+                this.m_FindTask.Start(new AsyncTask.Context(job));
+            }
+        }
 
 		private void FindTask(AsyncTask.Context context)
 		{
@@ -582,6 +627,7 @@ namespace Company.VSAnything
 			{
 				this.m_ThreadFilesProcessedCount = new int[this.m_ThreadCount];
 			}
+
 			for (int i = 0; i < this.m_ThreadCount; i++)
 			{
 				List<TextFinderResult> matching_words = new List<TextFinderResult>();
@@ -602,11 +648,28 @@ namespace Company.VSAnything
 				this.m_FindTextThreads[i].Start(new AsyncTask.Context(arg));
 				file_index += thread_file_count;
 			}
-			while (this.m_ActiveThreadCount != 0)
+            ///profile begin 
+            int startTime = Environment.TickCount;
+            int costTime = 0;
+            string searchStr = "";
+            for (int i = 0;i < job.m_Request.m_Patterns.Length;++i)
+            {
+                searchStr += job.m_Request.m_Patterns[i].m_Pattern + " ";
+            }
+            Log.logTrace("[ " + m_ActiveThreadCount.ToString() + " threads" + " Search for ]: " + searchStr);
+            //< wait for all thread finish  等待所有线程结束
+            while (this.m_ActiveThreadCount != 0)
 			{
-				this.m_FindthreadFinished.WaitOne();
-			}
-			if (!context.Cancelled)
+                this.m_FindthreadFinished.WaitOne();    
+
+                costTime = Environment.TickCount - startTime;
+                Log.logTrace("[one thread finish] cost time = " + costTime.ToString());
+            }
+            costTime = Environment.TickCount - startTime;
+            Log.logTrace("[Search Finish] Total costTime = " + costTime.ToString());
+            /// profile end
+            /// 
+            if (!context.Cancelled)
 			{
 				foreach (List<TextFinderResult> matching_words2 in job.m_MatchingWordsLists)
 				{
@@ -624,8 +687,173 @@ namespace Company.VSAnything
 				job.m_Request.FindFinished(job.m_Request);
 			}
 		}
+        private void FindWorkerThreadMainNew(AsyncTask.Context context)
+        {
+            TextFinder.FindThreadMainArgNew args = (TextFinder.FindThreadMainArgNew)context.Arg;
+            TextFinder.FindThreadShareContent shareContent = args.m_nShareContent;
+            Object shareContentLock = args.m_ShareContentLock;
+            TextFinder.TextFinderJob job = args.m_Job;
+            AsyncTask.Context parent_context = args.m_Context;
+            int thread_index = args.m_ThreadIndex;
+            
+            bool match_whole_word = job.m_MatchWholeWord;
+            bool reg_expression = job.m_RegExpression;
+            while (true)
+            {
+                int nIndex = -1;
+                if(parent_context.Cancelled)
+                {
+                    break;
+                }
+                lock (shareContentLock)
+                {
+                    if (shareContent.m_nCurrResultNum >= shareContent.m_nMaxResultNum)
+                    {
+                        break;
+                    }
+                    else if (shareContent.m_nGroupToPorcess >= shareContent.m_nGroupNum)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        nIndex = shareContent.m_nGroupToPorcess;
+                        shareContent.m_nGroupToPorcess++;
+                    }
+                }
+                List<string> files = shareContent.m_fileGroups[nIndex];
+                List<TextFinderResult> matching_words = args.m_nShareContent.m_matchWordsList[nIndex];
+                try
+                {
+                    int matching_word_index = 0;    // unused
+                    this.SearchFiles(job, files, parent_context, match_whole_word, matching_words, ref matching_word_index, thread_index);
+                }
+                catch (Exception arg_CB_0)
+                {
+                    Utils.LogException(arg_CB_0);
+                    break;
+                }
+                lock (shareContentLock)
+                {
+                    shareContent.m_nCurrResultNum += matching_words.Count();
+                }
+            }
+            
+            Interlocked.Decrement(ref this.m_ActiveThreadCount);
+            this.m_FindthreadFinished.Set();
+        }
+        private void FindTaskNew(AsyncTask.Context context)
+        {
+            TextFinder.TextFinderJob job = (TextFinder.TextFinderJob)context.Arg;
+            this.m_FindInProgress = true;
+            List<string> files = job.m_Files;
+            if (job.m_ExtOverride != null)
+            {
+                List<string> filtered_files = new List<string>();
+                foreach (string file in files)
+                {
+                    string ext = Path.GetExtension(file);
+                    if (job.m_ExtOverride.Contains(ext))
+                    {
+                        filtered_files.Add(file);
+                    }
+                }
+                files = filtered_files;
+            }
 
-		private void FindWorkerThreadMain(AsyncTask.Context context)
+            this.m_ActiveThreadCount = this.m_ThreadCount;
+            this.m_TotalResultCount = files.Count;
+            int key_count_per_thread = files.Count / this.m_ActiveThreadCount;
+            object threadFilesProcessedCountLock = this.m_ThreadFilesProcessedCountLock;
+            lock (threadFilesProcessedCountLock)
+            {
+                this.m_ThreadFilesProcessedCount = new int[this.m_ThreadCount];
+            }
+            key_count_per_thread = Math.Max(key_count_per_thread, 1);
+            int maxFilePerGroup = Math.Min(key_count_per_thread, 50);    // 每个任务最多处理50个文件
+
+            /// 预先将文件分成N个组
+            
+            FindThreadShareContent shareContent = new FindThreadShareContent();
+            Object shareContentLock = new object();
+
+            int fileNums = files.Count();
+            for (int i = 0; i < fileNums; i += maxFilePerGroup)
+            {
+                bool bBreak = false;
+                List<string> vec = new List<string>();
+                for (int j = 0; j < maxFilePerGroup; ++j)
+                {
+                    if (i + j >= fileNums)
+                    {
+                        bBreak = true;
+                        break;
+                    }
+                    vec.Add(files[i + j]);
+                }
+                shareContent.m_fileGroups.Add(vec);
+                shareContent.m_matchWordsList.Add(new List<TextFinderResult>());
+                if (bBreak)
+                {
+                    break;
+                }
+            }
+            shareContent.m_nGroupToPorcess = 0;
+            shareContent.m_nGroupNum = shareContent.m_fileGroups.Count();
+            shareContent.m_nCurrResultNum = 0;
+            shareContent.m_nMaxResultNum = job.m_Request.m_MaxResultCount;
+
+
+            for (int i = 0; i < this.m_ThreadCount; i++)
+            {
+                TextFinder.FindThreadMainArgNew arg = new TextFinder.FindThreadMainArgNew();
+                arg.m_nShareContent = shareContent;
+                arg.m_ShareContentLock = shareContentLock;
+                arg.m_ThreadIndex = i;
+                arg.m_Job = job;
+                arg.m_Context = context;
+                this.m_FindTextThreadsNew[i].Start(new AsyncTask.Context(arg));
+            }
+            ///profile begin 
+            int startTime = Environment.TickCount;
+            int costTime = 0;
+            string searchStr = "";
+            for (int i = 0; i < job.m_Request.m_Patterns.Length; ++i)
+            {
+                searchStr += job.m_Request.m_Patterns[i].m_Pattern + " ";
+            }
+            Log.logTrace("[ " + m_ActiveThreadCount.ToString() + " threads" + " Search for ]: " + searchStr);
+            //< wait for all thread finish  等待所有线程结束
+            while (this.m_ActiveThreadCount != 0)
+            {
+                this.m_FindthreadFinished.WaitOne();
+
+                costTime = Environment.TickCount - startTime;
+                Log.logTrace("[one thread finish] cost time = " + costTime.ToString());
+            }
+            costTime = Environment.TickCount - startTime;
+            Log.logTrace("[Search Finish] Total costTime = " + costTime.ToString());
+            /// profile end
+            /// 
+            if (!context.Cancelled)
+            {
+                foreach (List<TextFinderResult> matching_words2 in shareContent.m_matchWordsList)
+                {
+                    job.m_Request.m_MatchingWords.AddRange(matching_words2);
+                }
+                int max_result_count = job.m_Request.m_MaxResultCount;
+                if (job.m_Request.m_MatchingWords.Count > max_result_count)
+                {
+                    job.m_Request.m_MatchingWords.RemoveRange(max_result_count, job.m_Request.m_MatchingWords.Count - max_result_count);
+                }
+            }
+            this.m_FindInProgress = false;
+            if (!context.Cancelled)
+            {
+                job.m_Request.FindFinished(job.m_Request);
+            }
+        }
+        private void FindWorkerThreadMain(AsyncTask.Context context)
 		{
 			TextFinder.FindThreadMainArg expr_0B = (TextFinder.FindThreadMainArg)context.Arg;
 			TextFinder.TextFinderJob job = expr_0B.m_Job;
@@ -1466,7 +1694,7 @@ namespace Company.VSAnything
 			solution_path = solution_path.Replace('\\', '_');
 			solution_path = solution_path.Replace(':', '_');
 			solution_path = solution_path.Replace('.', '_');
-			return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\VSAnything\\" + solution_path + ".ff_cache";
+			return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\VSAnything\\" + solution_path + ".vs_cache";
 		}
 
 		private void Read(AsyncTask.Context context)
