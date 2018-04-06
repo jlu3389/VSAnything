@@ -217,7 +217,9 @@ namespace Company.VSAnything
         private FastFindTextBox m_TextBox;
         private CheckBox considerFileName_checkBox1;
         private Label labelLineCount;
+        private Panel panel1;
         private Label labelFileCount;
+        private Panel panel2;
         private MyListBox m_ListBox;
 
 		[method: CompilerGenerated]
@@ -1593,63 +1595,61 @@ namespace Company.VSAnything
 		private void InitializeComponent()
 		{
             this.m_OptionsPanel = new System.Windows.Forms.Panel();
-            this.labelLineCount = new System.Windows.Forms.Label();
-            this.labelFileCount = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.considerFileName_checkBox1 = new System.Windows.Forms.CheckBox();
             this.m_CheckBoxShowCurrFile = new System.Windows.Forms.CheckBox();
             this.m_FullPathTextBox = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.labelLineCount = new System.Windows.Forms.Label();
+            this.labelFileCount = new System.Windows.Forms.Label();
             this.m_TextBoxPanel = new System.Windows.Forms.Panel();
             this.m_TextBoxBorderPanel = new System.Windows.Forms.Panel();
-            this.label_search_mode = new System.Windows.Forms.Label();
             this.m_TextBox = new Company.VSAnything.FastFindTextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.label_search_mode = new System.Windows.Forms.Label();
             this.m_OptionsButton = new System.Windows.Forms.Button();
             this.m_ListBox = new Company.VSAnything.MyListBox();
             this.m_OptionsPanel.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.m_TextBoxPanel.SuspendLayout();
             this.m_TextBoxBorderPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // m_OptionsPanel
             // 
-            this.m_OptionsPanel.Controls.Add(this.labelLineCount);
-            this.m_OptionsPanel.Controls.Add(this.labelFileCount);
-            this.m_OptionsPanel.Controls.Add(this.considerFileName_checkBox1);
-            this.m_OptionsPanel.Controls.Add(this.m_CheckBoxShowCurrFile);
-            this.m_OptionsPanel.Controls.Add(this.m_FullPathTextBox);
+            this.m_OptionsPanel.AutoSize = true;
+            this.m_OptionsPanel.Controls.Add(this.panel2);
+            this.m_OptionsPanel.Controls.Add(this.panel1);
             this.m_OptionsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_OptionsPanel.Location = new System.Drawing.Point(0, 808);
+            this.m_OptionsPanel.Location = new System.Drawing.Point(0, 796);
+            this.m_OptionsPanel.MinimumSize = new System.Drawing.Size(0, 63);
             this.m_OptionsPanel.Name = "m_OptionsPanel";
-            this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 51);
+            this.m_OptionsPanel.Size = new System.Drawing.Size(1693, 63);
             this.m_OptionsPanel.TabIndex = 0;
             // 
-            // labelLineCount
+            // panel2
             // 
-            this.labelLineCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelLineCount.AutoSize = true;
-            this.labelLineCount.Location = new System.Drawing.Point(1593, 25);
-            this.labelLineCount.Name = "labelLineCount";
-            this.labelLineCount.Size = new System.Drawing.Size(53, 12);
-            this.labelLineCount.TabIndex = 17;
-            this.labelLineCount.Text = "Lines£º0";
-            // 
-            // labelFileCount
-            // 
-            this.labelFileCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelFileCount.AutoSize = true;
-            this.labelFileCount.Location = new System.Drawing.Point(1593, 3);
-            this.labelFileCount.Name = "labelFileCount";
-            this.labelFileCount.Size = new System.Drawing.Size(53, 12);
-            this.labelFileCount.TabIndex = 16;
-            this.labelFileCount.Text = "Files£º0";
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Controls.Add(this.considerFileName_checkBox1);
+            this.panel2.Controls.Add(this.m_CheckBoxShowCurrFile);
+            this.panel2.Controls.Add(this.m_FullPathTextBox);
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.MinimumSize = new System.Drawing.Size(0, 63);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(674, 65);
+            this.panel2.TabIndex = 19;
             // 
             // considerFileName_checkBox1
             // 
             this.considerFileName_checkBox1.AutoSize = true;
             this.considerFileName_checkBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.considerFileName_checkBox1.Location = new System.Drawing.Point(170, 0);
+            this.considerFileName_checkBox1.Location = new System.Drawing.Point(330, 0);
+            this.considerFileName_checkBox1.Margin = new System.Windows.Forms.Padding(5, 3, 3, 3);
             this.considerFileName_checkBox1.Name = "considerFileName_checkBox1";
-            this.considerFileName_checkBox1.Size = new System.Drawing.Size(174, 37);
+            this.considerFileName_checkBox1.Size = new System.Drawing.Size(342, 41);
             this.considerFileName_checkBox1.TabIndex = 15;
             this.considerFileName_checkBox1.Text = "Consider &FileName Of Line";
             this.considerFileName_checkBox1.UseVisualStyleBackColor = true;
@@ -1661,10 +1661,8 @@ namespace Company.VSAnything
             this.m_CheckBoxShowCurrFile.AutoSize = true;
             this.m_CheckBoxShowCurrFile.Dock = System.Windows.Forms.DockStyle.Left;
             this.m_CheckBoxShowCurrFile.Location = new System.Drawing.Point(0, 0);
-            this.m_CheckBoxShowCurrFile.Margin = new System.Windows.Forms.Padding(10, 3, 3, 3);
             this.m_CheckBoxShowCurrFile.Name = "m_CheckBoxShowCurrFile";
-            this.m_CheckBoxShowCurrFile.Padding = new System.Windows.Forms.Padding(2, 0, 0, 0);
-            this.m_CheckBoxShowCurrFile.Size = new System.Drawing.Size(170, 37);
+            this.m_CheckBoxShowCurrFile.Size = new System.Drawing.Size(330, 41);
             this.m_CheckBoxShowCurrFile.TabIndex = 14;
             this.m_CheckBoxShowCurrFile.Text = "Search &Current File Only";
             this.m_CheckBoxShowCurrFile.UseVisualStyleBackColor = true;
@@ -1674,13 +1672,43 @@ namespace Company.VSAnything
             // 
             this.m_FullPathTextBox.AutoSize = true;
             this.m_FullPathTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_FullPathTextBox.Location = new System.Drawing.Point(0, 37);
-            this.m_FullPathTextBox.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.m_FullPathTextBox.Location = new System.Drawing.Point(0, 41);
+            this.m_FullPathTextBox.Margin = new System.Windows.Forms.Padding(3);
             this.m_FullPathTextBox.Name = "m_FullPathTextBox";
-            this.m_FullPathTextBox.Padding = new System.Windows.Forms.Padding(3, 0, 0, 2);
-            this.m_FullPathTextBox.Size = new System.Drawing.Size(62, 14);
+            this.m_FullPathTextBox.Size = new System.Drawing.Size(118, 24);
             this.m_FullPathTextBox.TabIndex = 10;
             this.m_FullPathTextBox.Text = "full path";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.labelLineCount);
+            this.panel1.Controls.Add(this.labelFileCount);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(1493, 0);
+            this.panel1.MinimumSize = new System.Drawing.Size(200, 63);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(200, 63);
+            this.panel1.TabIndex = 18;
+            // 
+            // labelLineCount
+            // 
+            this.labelLineCount.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelLineCount.Location = new System.Drawing.Point(0, 24);
+            this.labelLineCount.Margin = new System.Windows.Forms.Padding(3, 6, 3, 3);
+            this.labelLineCount.Name = "labelLineCount";
+            this.labelLineCount.Size = new System.Drawing.Size(200, 24);
+            this.labelLineCount.TabIndex = 17;
+            this.labelLineCount.Text = "Lines£º0";
+            // 
+            // labelFileCount
+            // 
+            this.labelFileCount.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelFileCount.Location = new System.Drawing.Point(0, 0);
+            this.labelFileCount.Margin = new System.Windows.Forms.Padding(3);
+            this.labelFileCount.Name = "labelFileCount";
+            this.labelFileCount.Size = new System.Drawing.Size(200, 24);
+            this.labelFileCount.TabIndex = 16;
+            this.labelFileCount.Text = "Files£º0";
             // 
             // m_TextBoxPanel
             // 
@@ -1689,48 +1717,36 @@ namespace Company.VSAnything
             this.m_TextBoxPanel.Controls.Add(this.m_TextBoxBorderPanel);
             this.m_TextBoxPanel.Controls.Add(this.m_OptionsButton);
             this.m_TextBoxPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 780);
+            this.m_TextBoxPanel.Location = new System.Drawing.Point(0, 750);
             this.m_TextBoxPanel.Name = "m_TextBoxPanel";
-            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 28);
+            this.m_TextBoxPanel.Size = new System.Drawing.Size(1693, 46);
             this.m_TextBoxPanel.TabIndex = 0;
             // 
             // m_TextBoxBorderPanel
             // 
             this.m_TextBoxBorderPanel.AutoSize = true;
             this.m_TextBoxBorderPanel.BackColor = System.Drawing.Color.Black;
-            this.m_TextBoxBorderPanel.Controls.Add(this.label_search_mode);
             this.m_TextBoxBorderPanel.Controls.Add(this.m_TextBox);
             this.m_TextBoxBorderPanel.Controls.Add(this.button1);
+            this.m_TextBoxBorderPanel.Controls.Add(this.label_search_mode);
             this.m_TextBoxBorderPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.m_TextBoxBorderPanel.Location = new System.Drawing.Point(0, 0);
+            this.m_TextBoxBorderPanel.MinimumSize = new System.Drawing.Size(0, 44);
             this.m_TextBoxBorderPanel.Name = "m_TextBoxBorderPanel";
-            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1600, 26);
+            this.m_TextBoxBorderPanel.Size = new System.Drawing.Size(1600, 44);
             this.m_TextBoxBorderPanel.TabIndex = 0;
-            // 
-            // label_search_mode
-            // 
-            this.label_search_mode.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.label_search_mode.Font = new System.Drawing.Font("NSimSun", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label_search_mode.ForeColor = System.Drawing.Color.DarkOrchid;
-            this.label_search_mode.Location = new System.Drawing.Point(0, 0);
-            this.label_search_mode.Margin = new System.Windows.Forms.Padding(0);
-            this.label_search_mode.Name = "label_search_mode";
-            this.label_search_mode.Size = new System.Drawing.Size(169, 26);
-            this.label_search_mode.TabIndex = 17;
-            this.label_search_mode.Text = "Search <Text>£º";
-            this.label_search_mode.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-            this.label_search_mode.Click += new System.EventHandler(this.label_search_mode_Click);
             // 
             // m_TextBox
             // 
             this.m_TextBox.BackColor = System.Drawing.Color.Black;
             this.m_TextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.m_TextBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.m_TextBox.Font = new System.Drawing.Font("NSimSun", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.m_TextBox.ForeColor = System.Drawing.Color.White;
-            this.m_TextBox.Location = new System.Drawing.Point(169, 1);
+            this.m_TextBox.Location = new System.Drawing.Point(316, 0);
             this.m_TextBox.Margin = new System.Windows.Forms.Padding(0);
             this.m_TextBox.Name = "m_TextBox";
-            this.m_TextBox.Size = new System.Drawing.Size(1235, 22);
+            this.m_TextBox.Size = new System.Drawing.Size(1284, 44);
             this.m_TextBox.TabIndex = 0;
             this.m_TextBox.TabStop = false;
             this.m_TextBox.TextChanged += new System.EventHandler(this.TextBoxTextChanged);
@@ -1738,7 +1754,6 @@ namespace Company.VSAnything
             // 
             // button1
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
             this.button1.FlatAppearance.BorderSize = 0;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1751,6 +1766,22 @@ namespace Company.VSAnything
             this.button1.Click += new System.EventHandler(this.OldSearchesDropDownButtonClicked);
             this.button1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.OldSearchesDropDownButtonMouseDown);
             // 
+            // label_search_mode
+            // 
+            this.label_search_mode.AutoSize = true;
+            this.label_search_mode.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label_search_mode.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.label_search_mode.Font = new System.Drawing.Font("NSimSun", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_search_mode.ForeColor = System.Drawing.Color.DarkOrchid;
+            this.label_search_mode.Location = new System.Drawing.Point(0, 0);
+            this.label_search_mode.Margin = new System.Windows.Forms.Padding(0);
+            this.label_search_mode.Name = "label_search_mode";
+            this.label_search_mode.Size = new System.Drawing.Size(316, 38);
+            this.label_search_mode.TabIndex = 17;
+            this.label_search_mode.Text = "Search <Text>£º";
+            this.label_search_mode.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.label_search_mode.Click += new System.EventHandler(this.label_search_mode_Click);
+            // 
             // m_OptionsButton
             // 
             this.m_OptionsButton.Dock = System.Windows.Forms.DockStyle.Right;
@@ -1760,7 +1791,7 @@ namespace Company.VSAnything
             this.m_OptionsButton.ImageKey = "(none)";
             this.m_OptionsButton.Location = new System.Drawing.Point(1600, 0);
             this.m_OptionsButton.Name = "m_OptionsButton";
-            this.m_OptionsButton.Size = new System.Drawing.Size(91, 26);
+            this.m_OptionsButton.Size = new System.Drawing.Size(91, 44);
             this.m_OptionsButton.TabIndex = 1;
             this.m_OptionsButton.Text = "Setting";
             this.m_OptionsButton.UseVisualStyleBackColor = false;
@@ -1787,7 +1818,7 @@ namespace Company.VSAnything
             this.m_ListBox.ShowGettingSolutionFiles = false;
             this.m_ListBox.ShowNoItemsMessage = false;
             this.m_ListBox.ShowScanningFiles = false;
-            this.m_ListBox.Size = new System.Drawing.Size(1693, 780);
+            this.m_ListBox.Size = new System.Drawing.Size(1693, 750);
             this.m_ListBox.TabIndex = 10;
             this.m_ListBox.TabStop = false;
             this.m_ListBox.SelectedIndexchanged += new Company.VSAnything.MyListBox.SelectedIndexchangedHandler(this.ListBoxSelectedIndexChanged);
@@ -1803,7 +1834,9 @@ namespace Company.VSAnything
             this.Name = "FastFindControl";
             this.Size = new System.Drawing.Size(1693, 859);
             this.m_OptionsPanel.ResumeLayout(false);
-            this.m_OptionsPanel.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.m_TextBoxPanel.ResumeLayout(false);
             this.m_TextBoxPanel.PerformLayout();
             this.m_TextBoxBorderPanel.ResumeLayout(false);
