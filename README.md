@@ -1,6 +1,7 @@
 # Visual Studio 下最快的代码行搜索工具。
 
-####4.快捷键
+**快捷键shortcut**
+
 确保工程是用 .sln 文件打开的
 
 激活插件的默认快捷键是 `Alt + Q`，你可以在 `Tools -> Options -> Keyboard -> Tools.MyVsAnything` 修改。
