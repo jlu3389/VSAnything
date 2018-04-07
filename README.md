@@ -1,13 +1,8 @@
 # Visual Studio 下最快的代码行搜索工具。
 
-##  注意
-确保工程是用 .sln 文件打开的
-
-快捷键:Alt + Q
-
 ## 快捷键
-
-尽量使用 Alt 来做修饰键，按起来很舒服
+确保工程是用 .sln 文件打开的
+激活插件的默认快捷键是 `Alt + Q`，你可以在 `Tools -> Options -> Keyboard -> Tools.MyVsAnything` 修改。
 
 功能|介绍|快捷键
 ----| ----| ----
