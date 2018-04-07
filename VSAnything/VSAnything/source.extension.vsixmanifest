@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="f0242d42-7c10-472e-b103-aebd2d3940ba" Version="1.0" Language="en-US" Publisher="Company" />
+    <Identity Id="C634CB96-4F5B-40A5-9AA5-A4193EAB2BCC" Version="1.5" Language="en-US" Publisher="Company" />
     <DisplayName>VSAnything</DisplayName>
-    <Description>Information about my package</Description>
+    <Description xml:space="preserve">最快的代码行搜索插件 Fastest  Code Search Tool</Description>
   </Metadata>
   <Installation InstalledByMsi="false">
-    <InstallationTarget Version="[14.0,15.0)" Id="Microsoft.VisualStudio.Community" />
+    <InstallationTarget Version="[11.0,15.0)" Id="Microsoft.VisualStudio.Community" />
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
