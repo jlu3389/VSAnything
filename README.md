@@ -4,6 +4,7 @@
 确保工程是用 .sln 文件打开的
 
 激活插件的默认快捷键是 `Alt + Q`，你可以在 `Tools -> Options -> Keyboard -> Tools.MyVsAnything` 修改。
+
 功能|介绍|快捷键
 ----| ----| ----
 激活插件 | 建议将窗口Dock改为autoHide| Alt + Q
@@ -12,3 +13,4 @@
 键盘支持| vimer 最爱，Ctrl+J/K 上下选中 | Ctrl+J/K
 关闭窗口|注意要激活窗口|ESC
 打开选中结果| |Enter
+
