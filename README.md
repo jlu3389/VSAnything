@@ -1,4 +1,4 @@
-# Visual Studio 下最快的文本搜索工具。
+# Visual Studio 下最快的代码行搜索工具。
 
 ##  注意
 确保工程是用 .sln 文件打开的
