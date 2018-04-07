@@ -1,5 +1,3 @@
-# Visual Studio 下最快的代码行搜索工具。
-
 **快捷键shortcut**
 
 确保工程是用 .sln 文件打开的
