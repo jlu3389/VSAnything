@@ -1,18 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="C634CB96-4F5B-40A5-9AA5-A4193EAB2BCC" Version="1.5" Language="en-US" Publisher="Company" />
-    <DisplayName>VSAnything</DisplayName>
-    <Description xml:space="preserve">最快的代码行搜索插件 Fastest  Code Search Tool</Description>
-  </Metadata>
-  <Installation InstalledByMsi="false">
-    <InstallationTarget Version="[11.0,18.0)" Id="Microsoft.VisualStudio.Community" />
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
-    <Dependency Id="Microsoft.VisualStudio.MPF.11.0" DisplayName="Visual Studio MPF 11.0" d:Source="Installed" Version="11.0" />
-  </Dependencies>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-  </Assets>
+    <Metadata>
+        <Identity Id="C634CB96-4F5B-40A5-9AA5-A4193EAB2BCC" Version="1.5" Language="en-US" Publisher="Company" />
+        <DisplayName>VSAnything</DisplayName>
+        <Description xml:space="preserve">最快的代码行搜索插件 Fastest  Code Search Tool</Description>
+    </Metadata>
+    <Installation InstalledByMsi="false">
+        <InstallationTarget Version="[11.0,16.0)" Id="Microsoft.VisualStudio.Community" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="4.5" />
+        <Dependency Id="Microsoft.VisualStudio.MPF.11.0" DisplayName="Visual Studio MPF 11.0" d:Source="Installed" Version="11.0" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.Net.Component.4.6.1.TargetingPack" Version="[15.6.27406.0,16.0)" DisplayName=".NET Framework 4.6.1 目标包" />
+    </Prerequisites>
 </PackageManifest>
