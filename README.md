@@ -1,4 +1,8 @@
-**快捷键shortcut**
+**1. Download** 
+
+[VSAnything](https://marketplace.visualstudio.com/items?itemName=mario-0.VSAnything)
+
+**2. Shortcut**
 
 确保工程是用 .sln 文件打开的
 
