@@ -1,19 +1,24 @@
-**1. Download** 
+####1. Download####
 
 [VSAnything](https://marketplace.visualstudio.com/items?itemName=mario-0.VSAnything)
 
-**2. Shortcut**
+#### 2.Attention
 
-确保工程是用 .sln 文件打开的
+Make Sure that your project is organized by an `.sln` file.
 
-激活插件的默认快捷键是 `Alt + Q`，你可以在 `Tools -> Options -> Keyboard -> Tools.MyVsAnything` 修改。
+#### 3.keyboard Shortcut
+`Alt + Q` is the default shortcut to activate the plugin.
+You can modify it through `Tools -> Options -> Keyboard -> Tools.MyVsAnything`.
 
-功能|介绍|快捷键
+Feature|Description|ShortCut
 ----| ----| ----
-激活插件 | 建议将窗口Dock改为autoHide| Alt + Q
-全工程/当前文件搜索| 控制搜索的范围 | Alt + C 
-单行+文件名辅助模糊查找||Alt + F 
-键盘支持| vimer 最爱，Ctrl+J/K 上下选中 | Ctrl+J/K
-关闭窗口|注意要激活窗口|ESC
-打开选中结果| |Enter
+Activate the plugin | `Dock` the window and set it `autoHide`。| Alt + Q
+Search Whole Solution/Current File| Search Scope | Alt + C
+Consider File Name| |Alt + F 
+Select Result | Ctrl+J/K  -> ↑  ↓  | Ctrl+J/K /  ↑ ↓
+Close the plugin|Make Sure the Window is on focus|ESC
+Open Select Result| |Enter
+
+
+#### Gif 
 
